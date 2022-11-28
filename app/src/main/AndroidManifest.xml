@@ -13,15 +13,6 @@
         android:theme="@style/Theme.AssistenteViagens"
         tools:targetApi="31">
         <activity
-            android:name=".Pesquisa"
-            android:exported="false"
-            android:label="@string/title_activity_pesquisa"
-            android:theme="@style/Theme.AssistenteViagens">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".Navigation"
             android:exported="false"
             android:label="@string/title_activity_navigation"
