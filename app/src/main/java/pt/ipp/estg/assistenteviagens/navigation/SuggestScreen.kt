@@ -1,0 +1,85 @@
+package pt.ipp.estg.assistenteviagens.navigation
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import pt.ipp.estg.assistenteviagens.R
+
+@Composable
+fun SuggestScreen() {
+    val mContext = LocalContext.current
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+    ) {
+        Spacer(modifier = Modifier.size(15.dp))
+        Text(text = "O Que Procura?", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.size(15.dp))
+        Button(
+            modifier = Modifier
+                .width(300.dp)
+                .height(40.dp)
+                .align(Alignment.CenterHorizontally),
+            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
+            border = BorderStroke(1.dp, Color.Black),
+            shape = RoundedCornerShape(10.dp),
+            onClick = { /*TODO*/ }
+        ) {
+            Text(text = "Postos de Combustiveis", fontSize = 20.sp)
+        }
+        Spacer(modifier = Modifier.size(15.dp))
+        Button(
+            modifier = Modifier
+                .width(300.dp)
+                .height(40.dp)
+                .align(Alignment.CenterHorizontally),
+            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
+            border = BorderStroke(1.dp, Color.Black),
+            shape = RoundedCornerShape(10.dp),
+            enabled = false,
+            onClick = { /*TODO*/ }
+        ) {
+            Text(text = "Restaurantes", fontSize = 20.sp)
+        }
+        Spacer(modifier = Modifier.size(15.dp))
+        Button(
+            modifier = Modifier
+                .width(300.dp)
+                .height(40.dp)
+                .align(Alignment.CenterHorizontally),
+            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
+            border = BorderStroke(1.dp, Color.Black),
+            shape = RoundedCornerShape(10.dp),
+            enabled = false,
+            onClick = { /*TODO*/ }
+        ) {
+            Text(text = "Multibancos", fontSize = 20.sp)
+        }
+        Spacer(modifier = Modifier.size(15.dp))
+        Button(
+            modifier = Modifier
+                .width(300.dp)
+                .height(40.dp)
+                .align(Alignment.CenterHorizontally),
+            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
+            border = BorderStroke(1.dp, Color.Black),
+            shape = RoundedCornerShape(10.dp),
+            enabled = false,
+            onClick = { /*TODO*/ }
+        ) {
+            Text(text = "Museus", fontSize = 20.sp)
+        }
+    }
+
+}

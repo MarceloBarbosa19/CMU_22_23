@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">AssistenteViagens</string>
+    <string name="title_activity_splash_screen">SplashScreen</string>
+    <string name="title_activity_login_screen">LoginScreen</string>
+    <string name="title_activity_home_screen">HomeScreen</string>
+    <string name="title_activity_navigation">Navigation</string>
+    <string name="title_activity_register_screen">RegisterScreen</string>
+    <string name="title_activity_pesquisa">Pesquisa</string>
+</resources>
