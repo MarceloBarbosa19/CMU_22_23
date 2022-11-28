@@ -26,11 +26,11 @@ fun Pesquisa() {
     var mExpanded by remember { mutableStateOf(false) }
     var mSelectedText by remember { mutableStateOf("") }
 
-    val cars = listOf("Renault Clio", ",Kia XCEED")
-    val typeGas = listOf("Renault Clio", ",Kia XCEED")
-    val typeStation = listOf("Renault Clio", ",Kia XCEED")
-    val district = listOf("Renault Clio", ",Kia XCEED")
-    val county = listOf("Renault Clio", ",Kia XCEED")
+    val cars = listOf("Renault Clio", "Kia XCEED")
+    val typeGas = listOf("Gasoleo Simples", "Gasoleo Especial", "Gasolina Simples 95", "Gasoleo Especial 95")
+    val typeStation = listOf("Galp", "BP")
+    val district = listOf("Braga", "Porto")
+    val county = listOf("Felgueiras", "Fafe")
 
     val icon = if (mExpanded)
         Icons.Filled.KeyboardArrowUp
