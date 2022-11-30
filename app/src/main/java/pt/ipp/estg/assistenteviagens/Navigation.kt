@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -36,6 +37,8 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import pt.ipp.estg.assistenteviagens.navigation.*
+import pt.ipp.estg.assistenteviagens.navigation.models.NavigationItems
+import pt.ipp.estg.assistenteviagens.screens.stations.*
 import pt.ipp.estg.assistenteviagens.searchButton.SearchAppBar
 import pt.ipp.estg.assistenteviagens.searchButton.SearchViewModel
 import pt.ipp.estg.assistenteviagens.searchButton.SearchWidgetState
@@ -81,7 +84,8 @@ fun NavigationScreen(searchViewModel: SearchViewModel) {
                 onTextChange = { searchViewModel.updateSearchTextStage(newValue = it) },
                 onCloseClicked = { searchViewModel.updateSearchWidgetStage(newValue = SearchWidgetState.CLOSED) },
                 onSearchClicked = { Log.d("Searched Text", it) },
-                onSearchTriggered = { searchViewModel.updateSearchWidgetStage(newValue = SearchWidgetState.OPENED) }
+                onSearchTriggered = { searchViewModel.updateSearchWidgetStage(newValue = SearchWidgetState.OPENED) },
+                navController = navController
             )
         },
         drawerContent = {
@@ -100,6 +104,7 @@ fun NavigationScreen(searchViewModel: SearchViewModel) {
 fun MainAppBar(
     scaffoldState: ScaffoldState,
     scope: CoroutineScope,
+    navController: NavController,
     searchWidgetState: SearchWidgetState,
     searchTextState: String,
     onTextChange: (String) -> Unit,
@@ -112,7 +117,8 @@ fun MainAppBar(
             TopBar(
                 scope = scope,
                 scaffoldState = scaffoldState,
-                onSearchClicked = onSearchTriggered
+                onSearchClicked = onSearchTriggered,
+                navController = navController
             )
         }
         SearchWidgetState.OPENED -> {
@@ -127,7 +133,7 @@ fun MainAppBar(
 }
 
 @Composable
-fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState, onSearchClicked: () -> Unit) {
+fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState, onSearchClicked: () -> Unit, navController: NavController) {
     TopAppBar(
         title = { Text(text = "") },
         navigationIcon = {
@@ -143,14 +149,14 @@ fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState, onSearchClicked:
             ) {
                 Icon(imageVector = Icons.Filled.Search, contentDescription = "Search icon")
             }
-            /*IconButton(
-                onClick = { /*TODO*/ }
+            IconButton(
+                onClick = { navController.navigate(NavigationItems.Profile.route) }
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_account_circle_24),
+                    painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
                     contentDescription = "Icon Profile Account"
                 )
-            }*/
+            }
         },
         backgroundColor = colorResource(id = R.color.color_background_Drawer),
         contentColor = Color.Black
@@ -161,7 +167,6 @@ fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState, onSearchClicked:
 fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: NavHostController) {
     val items = listOf(
         NavigationItems.Home,
-        NavigationItems.Profile,
         NavigationItems.Favorites,
         NavigationItems.Suggest,
         NavigationItems.Settings,
@@ -251,31 +256,44 @@ fun DrawerItem(item: NavigationItems, selected: Boolean, onItemClick: (Navigatio
 fun NavigationScreens(navController: NavHostController) {
     val mContext = LocalContext.current
     NavHost(navController = navController, startDestination = NavigationItems.Home.route) {
+        //Screens of Drawer
         composable(NavigationItems.Home.route) {
             HomeScreen()
         }
-
-        composable(NavigationItems.Profile.route) {
-            ProfileScreen()
-        }
-
-        composable(NavigationItems.Suggest.route) {
-            SuggestScreen()
-        }
-
         composable(NavigationItems.Favorites.route) {
             FavoritesScreen()
         }
-
+        composable(NavigationItems.Suggest.route) {
+            SuggestScreen(navController)
+        }
         composable(NavigationItems.Settings.route) {
             SettingsScreen()
         }
-
         composable(NavigationItems.Logout.route) {
             Column() {
-                val intent = Intent(mContext, MainActivity::class.java)
+                val intent = Intent(mContext, LoginScreen::class.java)
                 mContext.startActivity(intent)
             }
+        }
+        //Screens of Profile
+        composable(NavigationItems.Profile.route) {
+            ProfileScreen()
+        }
+        //Screens of Gas Stations
+        composable(NavigationItems.SearchStation.route) {
+            SearchStations(navController)
+        }
+        composable(NavigationItems.TopStations.route) {
+            TopStations()
+        }
+        composable(NavigationItems.FoundStation.route) {
+            FoundStation(navController)
+        }
+        composable(NavigationItems.InfoStation.route) {
+            InfoStation(navController)
+        }
+        composable(NavigationItems.LocalizationStation.route) {
+            LocalizationStation()
         }
     }
 }
