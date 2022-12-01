@@ -160,7 +160,7 @@ fun Register() {
                 border = BorderStroke(1.dp, Color.Black),
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
-                    val intent = Intent(mContext, Navigation::class.java)
+                    val intent = Intent(mContext, LoginScreen::class.java)
                     mContext.startActivity(intent)
                 }) {
                 Text(text = "LET'S GET STARTED", fontSize = 20.sp, fontWeight = FontWeight.Bold)

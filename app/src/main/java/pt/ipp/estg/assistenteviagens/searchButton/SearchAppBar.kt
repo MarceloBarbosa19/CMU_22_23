@@ -71,8 +71,6 @@ fun SearchAppBar(
                 backgroundColor = Color.Transparent,
                 cursorColor = Color.Black.copy(alpha = ContentAlpha.medium)
             )
-            //KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            //KeyboardActions = KeyboardActions(onSearch = { onSearchClicked(text) }),
         )
     }
 }

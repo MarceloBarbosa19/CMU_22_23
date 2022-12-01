@@ -13,18 +13,25 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import pt.ipp.estg.assistenteviagens.NavigationScreen
 import pt.ipp.estg.assistenteviagens.R
+import pt.ipp.estg.assistenteviagens.navigation.models.NavigationItems
 
 @Composable
-fun SuggestScreen() {
-    val mContext = LocalContext.current
+fun SuggestScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
     ) {
         Spacer(modifier = Modifier.size(15.dp))
-        Text(text = "O Que Procura?", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+        Text(
+            text = "O Que Procura?",
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(10.dp)
+        )
         Spacer(modifier = Modifier.size(15.dp))
         Button(
             modifier = Modifier
@@ -34,7 +41,7 @@ fun SuggestScreen() {
             colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
             border = BorderStroke(1.dp, Color.Black),
             shape = RoundedCornerShape(10.dp),
-            onClick = { /*TODO*/ }
+            onClick = { navController.navigate(NavigationItems.SearchStation.route) }
         ) {
             Text(text = "Postos de Combustiveis", fontSize = 20.sp)
         }
@@ -81,5 +88,4 @@ fun SuggestScreen() {
             Text(text = "Museus", fontSize = 20.sp)
         }
     }
-
 }
