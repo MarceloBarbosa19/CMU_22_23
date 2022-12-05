@@ -4,7 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class Cars(
+data class Car(
+    val userCreator_Id: Int,
     val name: String,
     val gasType: String,
 ) {

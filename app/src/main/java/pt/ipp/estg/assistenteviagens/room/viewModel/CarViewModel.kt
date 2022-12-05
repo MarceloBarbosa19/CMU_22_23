@@ -7,13 +7,14 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pt.ipp.estg.assistenteviagens.room.dataBase.CarsDataBase
-import pt.ipp.estg.assistenteviagens.room.entity.Cars
+import pt.ipp.estg.assistenteviagens.room.entity.Car
+import pt.ipp.estg.assistenteviagens.room.entity.UserWithCars
 import pt.ipp.estg.assistenteviagens.room.repository.CarsRepository
 
 class CarViewModel(application: Application) : AndroidViewModel(application) {
 
     val repository: CarsRepository
-    val allCars: LiveData<List<Cars>>
+    val allCars: LiveData<List<UserWithCars>>
 
     init {
         val db = CarsDataBase.getDatabase(application)
@@ -21,13 +22,13 @@ class CarViewModel(application: Application) : AndroidViewModel(application) {
         allCars = repository.getCars()
     }
 
-    fun insertCar(car: Cars) {
+    fun insertCar(car: Car) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.insert(car)
         }
     }
 
-    fun deleteCar(car: Cars) {
+    fun deleteCar(car: Car) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.insert(car)
         }
