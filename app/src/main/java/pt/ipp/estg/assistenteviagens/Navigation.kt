@@ -39,8 +39,6 @@ import kotlinx.coroutines.launch
 import pt.ipp.estg.assistenteviagens.navigation.*
 import pt.ipp.estg.assistenteviagens.navigation.models.NavigationItems
 import pt.ipp.estg.assistenteviagens.navigation.screens.stations.*
-import pt.ipp.estg.assistenteviagens.navigation.stations.*
-import pt.ipp.estg.assistenteviagens.screens.stations.*
 import pt.ipp.estg.assistenteviagens.utils.searchButton.SearchAppBar
 import pt.ipp.estg.assistenteviagens.utils.searchButton.SearchViewModel
 import pt.ipp.estg.assistenteviagens.utils.searchButton.SearchWidgetState

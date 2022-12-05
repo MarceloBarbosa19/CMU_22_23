@@ -8,7 +8,6 @@ data class User(
     /* room nao guarda imagens */
     val name: String,
     val description: String,
-    val cars: List<Cars>,
     val email: String,
     val password: String,
 ) {
