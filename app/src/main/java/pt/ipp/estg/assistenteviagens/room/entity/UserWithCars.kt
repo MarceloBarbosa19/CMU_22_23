@@ -1,5 +1,6 @@
 package pt.ipp.estg.assistenteviagens.room.entity
 
+import androidx.lifecycle.LiveData
 import androidx.room.Embedded
 import androidx.room.Relation
 
@@ -9,5 +10,5 @@ data class UserWithCars(
         parentColumn = "user_id",
         entityColumn = "userCreator_Id"
     )
-    val cars: List<Car>
+    val cars: LiveData<List<Car>>
 )
