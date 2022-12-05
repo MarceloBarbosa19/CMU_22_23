@@ -1,4 +1,4 @@
-package pt.ipp.estg.assistenteviagens.screens.stations
+package pt.ipp.estg.assistenteviagens.navigation.screens.stations
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.*
