@@ -14,7 +14,8 @@ import pt.ipp.estg.assistenteviagens.room.repository.CarsRepository
 class CarViewModel(application: Application) : AndroidViewModel(application) {
 
     val repository: CarsRepository
-    val allCars: LiveData<List<UserWithCars>>
+    //val allCars: LiveData<List<UserWithCars>>
+    val allCars: LiveData<List<Car>>
 
     init {
         val db = CarsDataBase.getDatabase(application)

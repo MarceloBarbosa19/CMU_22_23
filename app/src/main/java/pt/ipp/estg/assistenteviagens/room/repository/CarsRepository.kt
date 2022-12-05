@@ -7,7 +7,14 @@ import pt.ipp.estg.assistenteviagens.room.entity.UserWithCars
 
 class CarsRepository(val carsDao: CarsDao) {
 
+    /*
     fun getCars(): LiveData<List<UserWithCars>> {
+        return carsDao.getCars()
+    }
+    */
+
+
+    fun getCars(): LiveData<List<Car>> {
         return carsDao.getCars()
     }
 
