@@ -1,4 +1,4 @@
-package pt.ipp.estg.assistenteviagens.screens.stations
+package pt.ipp.estg.assistenteviagens.navigation.screens.stations
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
