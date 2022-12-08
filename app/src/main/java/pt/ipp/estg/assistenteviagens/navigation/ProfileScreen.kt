@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -61,8 +62,10 @@ fun ProfileScreen() {
         Spacer(modifier = Modifier.height(10.dp))
         Image(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally),
-            painter = painterResource(id = R.drawable.profile),
+                .align(Alignment.CenterHorizontally)
+                .size(200.dp)
+                .clip(RoundedCornerShape(percent = 10)),
+            painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
             contentDescription = "Profileicon",
             contentScale = ContentScale.Fit,
         )
