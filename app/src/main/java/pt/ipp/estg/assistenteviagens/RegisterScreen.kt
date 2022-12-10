@@ -25,6 +25,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import pt.ipp.estg.assistenteviagens.room.UserDatabase.UserViewModel
+import pt.ipp.estg.assistenteviagens.room.UserDatabase.entity.User
 import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 class RegisterScreen : ComponentActivity() {
@@ -46,7 +49,9 @@ class RegisterScreen : ComponentActivity() {
 
 @Composable
 fun Register() {
+    val userViewModel: UserViewModel = viewModel()
     val mContext = LocalContext.current
+
     var inputName by remember { mutableStateOf("") }
     var inputEmail by remember { mutableStateOf("") }
     var inputPass by remember { mutableStateOf("") }
@@ -82,12 +87,9 @@ fun Register() {
             OutlinedTextField(
                 label = { Text(text = "Full name") },
                 value = inputName,
-                onValueChange = { inputEmail = it },
+                onValueChange = { inputName = it },
                 leadingIcon = {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
-                        contentDescription = "IconName"
-                    )
+                    Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "IconUser")
                 },
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
@@ -160,6 +162,8 @@ fun Register() {
                 border = BorderStroke(1.dp, Color.Black),
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
+                    userViewModel.insertUser(User(inputEmail, inputName, inputPass))
+
                     val intent = Intent(mContext, LoginScreen::class.java)
                     mContext.startActivity(intent)
                 }) {
