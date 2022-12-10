@@ -2,6 +2,7 @@ package pt.ipp.estg.assistenteviagens
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -13,6 +14,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +28,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import pt.ipp.estg.assistenteviagens.room.UserDatabase.UserViewModel
 import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 class LoginScreen : ComponentActivity() {
@@ -46,6 +50,9 @@ class LoginScreen : ComponentActivity() {
 
 @Composable
 fun Login() {
+    val userViewModel: UserViewModel = viewModel()
+    val users =  userViewModel.readAllData.observeAsState()
+
     val mContext = LocalContext.current
     var inputEmail by remember { mutableStateOf("") }
     var inputPass by remember { mutableStateOf("") }
@@ -93,7 +100,7 @@ fun Login() {
                 color = colorResource(id = R.color.color_text_login),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
-            Spacer(modifier = Modifier.size(100.dp))
+            Spacer(modifier = Modifier.size(80.dp))
             OutlinedTextField(
                 label = { Text(text = "Email Address") },
                 value = inputEmail,
@@ -158,8 +165,15 @@ fun Login() {
                 border = BorderStroke(1.dp, Color.Black),
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
-                    val intent = Intent(mContext, Navigation::class.java)
-                    mContext.startActivity(intent)
+                    users.value?.forEach { user->
+                        if(inputEmail == user.email && inputPass == user.password){
+                            val intent = Intent(mContext, Navigation::class.java)
+                            mContext.startActivity(intent)
+                            Toast.makeText(mContext, "Login Successfully", Toast.LENGTH_LONG).show()
+                        }else{
+                            Toast.makeText(mContext, "Error in Email or Password", Toast.LENGTH_LONG).show()
+                        }
+                    }
                 }) {
                 Text(text = "Login", fontSize = 25.sp, fontWeight = FontWeight.Bold)
             }

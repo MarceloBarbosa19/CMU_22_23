@@ -1,4 +1,4 @@
-package pt.ipp.estg.assistenteviagens.room.viewModel
+package pt.ipp.estg.assistenteviagens.room.CarDatabase
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -6,10 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import pt.ipp.estg.assistenteviagens.room.dataBase.CarsDataBase
-import pt.ipp.estg.assistenteviagens.room.entity.Car
-import pt.ipp.estg.assistenteviagens.room.entity.UserWithCars
-import pt.ipp.estg.assistenteviagens.room.repository.CarsRepository
+import pt.ipp.estg.assistenteviagens.room.CarDatabase.CarsDataBase
+import pt.ipp.estg.assistenteviagens.room.CarDatabase.entity.Car
+import pt.ipp.estg.assistenteviagens.room.CarDatabase.CarsRepository
 
 class CarViewModel(application: Application) : AndroidViewModel(application) {
 

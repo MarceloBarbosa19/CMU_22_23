@@ -1,4 +1,4 @@
-package pt.ipp.estg.assistenteviagens.room.entity
+package pt.ipp.estg.assistenteviagens.room.CarDatabase.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

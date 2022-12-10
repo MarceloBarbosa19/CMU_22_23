@@ -1,9 +1,8 @@
-package pt.ipp.estg.assistenteviagens.room.repository
+package pt.ipp.estg.assistenteviagens.room.CarDatabase
 
 import androidx.lifecycle.LiveData
-import pt.ipp.estg.assistenteviagens.room.dao.CarsDao
-import pt.ipp.estg.assistenteviagens.room.entity.Car
-import pt.ipp.estg.assistenteviagens.room.entity.UserWithCars
+import pt.ipp.estg.assistenteviagens.room.CarDatabase.CarsDao
+import pt.ipp.estg.assistenteviagens.room.CarDatabase.entity.Car
 
 class CarsRepository(val carsDao: CarsDao) {
 
@@ -18,11 +17,11 @@ class CarsRepository(val carsDao: CarsDao) {
         return carsDao.getCars()
     }
 
-    suspend fun insert(car:Car){
+    suspend fun insert(car: Car){
         carsDao.insert(car)
     }
 
-    suspend fun delete(car:Car){
+    suspend fun delete(car: Car){
         carsDao.delete(car)
     }
 

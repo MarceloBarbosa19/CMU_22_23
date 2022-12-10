@@ -1,11 +1,10 @@
-package pt.ipp.estg.assistenteviagens.room.dataBase
+package pt.ipp.estg.assistenteviagens.room.CarDatabase
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import pt.ipp.estg.assistenteviagens.room.dao.CarsDao
-import pt.ipp.estg.assistenteviagens.room.entity.Car
+import pt.ipp.estg.assistenteviagens.room.CarDatabase.entity.Car
 
 @Database(entities = [Car::class], version = 1)
 abstract class CarsDataBase : RoomDatabase() {

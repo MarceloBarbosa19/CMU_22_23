@@ -1,9 +1,8 @@
-package pt.ipp.estg.assistenteviagens.room.dao
+package pt.ipp.estg.assistenteviagens.room.CarDatabase
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import pt.ipp.estg.assistenteviagens.room.entity.Car
-import pt.ipp.estg.assistenteviagens.room.entity.UserWithCars
+import pt.ipp.estg.assistenteviagens.room.CarDatabase.entity.Car
 
 @Dao
 interface CarsDao {
