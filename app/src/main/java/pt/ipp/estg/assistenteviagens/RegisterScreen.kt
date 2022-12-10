@@ -2,6 +2,7 @@ package pt.ipp.estg.assistenteviagens
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -162,10 +163,15 @@ fun Register() {
                 border = BorderStroke(1.dp, Color.Black),
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
-                    userViewModel.insertUser(User(inputEmail, inputName, inputPass))
 
-                    val intent = Intent(mContext, LoginScreen::class.java)
-                    mContext.startActivity(intent)
+                    if(inputName.isNotEmpty() && inputEmail.isNotEmpty() && inputPass.isNotEmpty()){
+                        userViewModel.insertUser(User(inputEmail, inputName, inputPass))
+
+                        val intent = Intent(mContext, LoginScreen::class.java)
+                        mContext.startActivity(intent)
+                    }else{
+                        Toast.makeText(mContext, "The fields can´t by empty", Toast.LENGTH_LONG).show()
+                    }
                 }) {
                 Text(text = "LET'S GET STARTED", fontSize = 20.sp, fontWeight = FontWeight.Bold)
             }
