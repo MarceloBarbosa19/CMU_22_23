@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/car_crash/baseline_car_crash_24.xml" />
+                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/circle/baseline_circle_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -33,8 +33,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="ea0606" />
-                            <entry key="outputName" value="ic_baseline_car_crash_24" />
+                            <entry key="outputName" value="ic_baseline_circle_24" />
                             <entry key="sourceFile" value="/C:\Users\Utilizador\Desktop\uni\22_23\1_semestre\CMU\Trabalho\cmuproject_grupo10" />
                           </map>
                         </option>
