@@ -44,10 +44,12 @@ fun SettingsScreen() {
     var dialogOpenRemove by remember { mutableStateOf(false) }
     var dialogOpenPassword by remember { mutableStateOf(false) }
     var dialogOpenDelete by remember { mutableStateOf(false) }
-    Column(modifier = Modifier
-        .fillMaxHeight()
-        .fillMaxWidth()
-        .verticalScroll(rememberScrollState())) {
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+    ) {
         Image(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -87,44 +89,74 @@ fun SettingsScreen() {
                 )
             })
         Spacer(modifier = Modifier.height(20.dp))
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 40.dp)) {
-            Image(painter = painterResource(id = R.drawable.ic_baseline_directions_car_24),
-                contentDescription = "IconCar")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 40.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_baseline_directions_car_24),
+                contentDescription = "IconCar"
+            )
             Spacer(modifier = Modifier.width(20.dp))
             Text(text = "Cars", fontSize = 20.sp)
             Spacer(modifier = Modifier.width(200.dp))
-            Image(modifier = Modifier.clickable {  dialogOpen = true },painter = painterResource(id = R.drawable.ic_baseline_add_24),
-                contentDescription = "IconAdd")
-
+            Image(
+                modifier = Modifier.clickable { dialogOpen = true },
+                painter = painterResource(id = R.drawable.ic_baseline_add_24),
+                contentDescription = "IconAdd"
+            )
         }
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 20.dp, horizontal = 60.dp))
+        Spacer(modifier = Modifier.height(20.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 60.dp, end = 60.dp)
+        )
         {
-            Row(modifier = Modifier
-                .fillMaxWidth()) {
-                Image(painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
-                    contentDescription = "IconArrow")
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
+                    contentDescription = "IconArrow"
+                )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Renault Clio - Gasoleo",fontSize = 15.sp, modifier = Modifier.weight(1f))
-                Image(modifier = Modifier.clickable {  dialogOpenRemove = true },painter = painterResource(id = R.drawable.ic_baseline_remove_24),
-                    contentDescription = "IconRemove")
+                Text(
+                    text = "Renault Clio - Gasoleo",
+                    fontSize = 15.sp,
+                    modifier = Modifier.weight(1f)
+                )
+                Image(
+                    modifier = Modifier.clickable { dialogOpenRemove = true },
+                    painter = painterResource(id = R.drawable.ic_baseline_remove_24),
+                    contentDescription = "IconRemove"
+                )
             }
             Spacer(modifier = Modifier.height(10.dp))
-            Row(modifier = Modifier
-                .fillMaxWidth()) {
-                Image(painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
-                    contentDescription = "IconArrow")
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
+                    contentDescription = "IconArrow"
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = "Kia - Gasolina", fontSize = 15.sp, modifier = Modifier.weight(1f))
-                Image(modifier = Modifier.clickable {  dialogOpenRemove = true },painter = painterResource(id = R.drawable.ic_baseline_remove_24),
-                    contentDescription = "IconRemove")
+                Image(
+                    modifier = Modifier.clickable { dialogOpenRemove = true },
+                    painter = painterResource(id = R.drawable.ic_baseline_remove_24),
+                    contentDescription = "IconRemove"
+                )
             }
         }
-        Column(modifier = Modifier
-            .fillMaxWidth()) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
             OutlinedTextField(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -141,9 +173,11 @@ fun SettingsScreen() {
                 })
         }
         Spacer(modifier = Modifier.height(14.dp))
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
             Button(
                 modifier = Modifier
                     .width(325.dp)
@@ -481,6 +515,7 @@ fun SettingsScreen() {
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewSettingsScreen() {
