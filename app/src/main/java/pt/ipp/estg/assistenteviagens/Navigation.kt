@@ -172,7 +172,6 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
         NavigationItems.Settings,
         NavigationItems.Logout,
     )
-
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -195,7 +194,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
                         .padding(10.dp)
                 )
                 Spacer(modifier = Modifier.size(10.dp))
-                //Dps vai buscar ao room e nao fica assim
+                //Dps vai buscar ao room
                 Text(
                     text = "Marcelo Barbosa",
                     fontSize = 20.sp,
@@ -203,10 +202,9 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
                 Spacer(modifier = Modifier.size(10.dp))
-                Divider(color = Color.Black)
+                Divider(color = Color.Gray)
             }
         }
-
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRout = navBackStackEntry?.destination?.route
         items.forEach { item ->
