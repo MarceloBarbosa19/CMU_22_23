@@ -22,6 +22,7 @@ fun SuggestScreen(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
+            .padding(horizontal = 20.dp)
     ) {
         Spacer(modifier = Modifier.size(15.dp))
         Text(
@@ -33,8 +34,9 @@ fun SuggestScreen(navController: NavController) {
         Spacer(modifier = Modifier.size(15.dp))
         Button(
             modifier = Modifier
-                .width(300.dp)
-                .height(40.dp)
+                .fillMaxWidth()
+                .size(60.dp)
+                .padding(horizontal = 20.dp)
                 .align(Alignment.CenterHorizontally),
             colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
             border = BorderStroke(1.dp, Color.Black),
@@ -46,8 +48,9 @@ fun SuggestScreen(navController: NavController) {
         Spacer(modifier = Modifier.size(15.dp))
         Button(
             modifier = Modifier
-                .width(300.dp)
-                .height(40.dp)
+                .fillMaxWidth()
+                .size(60.dp)
+                .padding(horizontal = 20.dp)
                 .align(Alignment.CenterHorizontally),
             colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
             border = BorderStroke(1.dp, Color.Black),
@@ -60,8 +63,9 @@ fun SuggestScreen(navController: NavController) {
         Spacer(modifier = Modifier.size(15.dp))
         Button(
             modifier = Modifier
-                .width(300.dp)
-                .height(40.dp)
+                .fillMaxWidth()
+                .size(60.dp)
+                .padding(horizontal = 20.dp)
                 .align(Alignment.CenterHorizontally),
             colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
             border = BorderStroke(1.dp, Color.Black),
@@ -74,8 +78,9 @@ fun SuggestScreen(navController: NavController) {
         Spacer(modifier = Modifier.size(15.dp))
         Button(
             modifier = Modifier
-                .width(300.dp)
-                .height(40.dp)
+                .fillMaxWidth()
+                .size(60.dp)
+                .padding(horizontal = 20.dp)
                 .align(Alignment.CenterHorizontally),
             colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
             border = BorderStroke(1.dp, Color.Black),

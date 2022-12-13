@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -69,7 +71,6 @@ fun NavigationScreen(searchViewModel: SearchViewModel) {
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
-
     val searchWidgetState by searchViewModel.searchWidgetState
     val searchTextState by searchViewModel.searchTextState
 
@@ -83,7 +84,7 @@ fun NavigationScreen(searchViewModel: SearchViewModel) {
                 searchTextState = searchTextState,
                 onTextChange = { searchViewModel.updateSearchTextStage(newValue = it) },
                 onCloseClicked = { searchViewModel.updateSearchWidgetStage(newValue = SearchWidgetState.CLOSED) },
-                onSearchClicked = { Log.d("Searched Text", it) },
+                onSearchClicked = { Log.d("SearchedText", it) },
                 onSearchTriggered = { searchViewModel.updateSearchWidgetStage(newValue = SearchWidgetState.OPENED) },
                 navController = navController
             )

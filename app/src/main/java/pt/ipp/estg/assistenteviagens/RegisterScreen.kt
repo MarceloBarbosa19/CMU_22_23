@@ -27,8 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import pt.ipp.estg.assistenteviagens.room.UserDatabase.UserViewModel
-import pt.ipp.estg.assistenteviagens.room.UserDatabase.entity.User
+import pt.ipp.estg.assistenteviagens.room.userDatabase.UserViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabase.User
 import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 class RegisterScreen : ComponentActivity() {
@@ -163,7 +163,6 @@ fun Register() {
                 border = BorderStroke(1.dp, Color.Black),
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
-
                     if(inputName.isNotEmpty() && inputEmail.isNotEmpty() && inputPass.isNotEmpty()){
                         userViewModel.insertUser(User(inputEmail, inputName, inputPass))
 

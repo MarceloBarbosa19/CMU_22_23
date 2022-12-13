@@ -3,12 +3,15 @@ package pt.ipp.estg.assistenteviagens.navigation.screens.stations
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -20,9 +23,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import pt.ipp.estg.assistenteviagens.R
 import pt.ipp.estg.assistenteviagens.navigation.models.NavigationItems
+import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.brands.BrandsViewModel
+import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.countys.CountysViewModel
+import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.districts.DistrictsViewModel
+import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.gasType.GasTypeViewModel
 
 @Composable
 fun SearchStations(navController: NavController) {
@@ -37,201 +45,221 @@ fun SearchStations(navController: NavController) {
     var mSelectedTextTypeStation by remember { mutableStateOf("") }
     var mSelectedTextDistrict by remember { mutableStateOf("") }
     var mSelectedTextCounty by remember { mutableStateOf("") }
+
     var mTextFieldSize by remember { mutableStateOf(Size.Zero) }
+    var aux by remember { mutableStateOf(0) }
 
-    val cars = listOf("Renault Clio", "Kia XCeed", "Mercedes 320 CDi")
-    val typeGas =
-        listOf("Gasoleo Simples", "Gasoleo Especial", "Gasolina Simples 95", "Gasoleo Especial 95")
-    val typeStation = listOf("Galp", "BP")
-    val district = listOf("Braga", "Porto")
-    val county = listOf("Felgueiras", "Fafe")
+    val gasTypesViewModel: GasTypeViewModel = viewModel()
+    val brandsViewModel: BrandsViewModel = viewModel()
+    val districtsViewModel: DistrictsViewModel = viewModel()
+    val countysViewModel: CountysViewModel = viewModel()
 
+    val gasType = gasTypesViewModel.getAllGasTypes().observeAsState()
+    val brands = brandsViewModel.getAllBrands().observeAsState()
+    val districts = districtsViewModel.getAllDistricts().observeAsState()
+    val countys = countysViewModel.getAllCountys().observeAsState()
+
+    val cars = listOf("Renault clio", "Merceds", "Kia")
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 20.dp)
+            .verticalScroll(rememberScrollState())
     ) {
-        Spacer(modifier = Modifier.size(15.dp))
-        OutlinedTextField(
-            value = mSelectedTextCar,
-            onValueChange = { mSelectedTextCar = it },
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .onGloballyPositioned { coordinates ->
-                    mTextFieldSize = coordinates.size.toSize()
-                },
-            label = { Text("Selecione Carro") },
-            trailingIcon = {
-                Icon(
-                    imageVector = if (mExpandedCar) {
-                        Icons.Filled.KeyboardArrowUp
-                    } else {
-                        Icons.Filled.KeyboardArrowDown
-                    },
-                    contentDescription = "Icon Dropdown",
-                    modifier = Modifier.clickable { mExpandedCar = !mExpandedCar })
-            }
-        )
-        DropdownMenu(
-            expanded = mExpandedCar,
-            onDismissRequest = { mExpandedCar = false },
-            modifier = Modifier.width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
+                .fillMaxHeight()
+                .padding(horizontal = 20.dp),
         ) {
-            cars.forEach { item ->
-                DropdownMenuItem(onClick = {
-                    mSelectedTextCar = item
-                    mExpandedCar = false
-                }) {
-                    Text(text = item)
+            Spacer(modifier = Modifier.size(15.dp))
+            OutlinedTextField(
+                value = mSelectedTextCar,
+                onValueChange = { mSelectedTextCar = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { coordinates ->
+                        mTextFieldSize = coordinates.size.toSize()
+                    },
+                placeholder = { Text("Selecione o Carro") },
+                trailingIcon = {
+                    Icon(
+                        imageVector = if (mExpandedCar) {
+                            Icons.Filled.KeyboardArrowUp
+                        } else {
+                            Icons.Filled.KeyboardArrowDown
+                        },
+                        contentDescription = "Icon Dropdown",
+                        modifier = Modifier.clickable { mExpandedCar = !mExpandedCar })
+                }
+            )
+            DropdownMenu(
+                expanded = mExpandedCar,
+                onDismissRequest = { mExpandedCar = false },
+                modifier = Modifier.width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
+            ) {
+                cars.forEach { item ->
+                    DropdownMenuItem(onClick = {
+                        mSelectedTextCar = item
+                        mExpandedCar = false
+                    }) {
+                        Text(text = item)
+                    }
                 }
             }
-        }
-        Spacer(modifier = Modifier.size(15.dp))
-        OutlinedTextField(
-            value = mSelectedTextTypeGas,
-            onValueChange = { mSelectedTextTypeGas = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .onGloballyPositioned { coordinates ->
-                    mTextFieldSize = coordinates.size.toSize()
-                },
-            placeholder = { Text("Selecione Tipo de Combustivel") },
-            trailingIcon = {
-                Icon(
-                    imageVector = if (mExpandedTypeGas) {
-                        Icons.Filled.KeyboardArrowUp
-                    } else {
-                        Icons.Filled.KeyboardArrowDown
+            Spacer(modifier = Modifier.size(15.dp))
+            OutlinedTextField(
+                value = mSelectedTextTypeGas,
+                onValueChange = { mSelectedTextTypeGas = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { coordinates ->
+                        mTextFieldSize = coordinates.size.toSize()
                     },
-                    contentDescription = "Icon Dropdown",
-                    modifier = Modifier.clickable { mExpandedTypeGas = !mExpandedTypeGas })
-            }
-        )
-        DropdownMenu(
-            expanded = mExpandedTypeGas,
-            onDismissRequest = { mExpandedTypeGas = false },
-            modifier = Modifier.width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
-        ) {
-            typeGas.forEach { item ->
-                DropdownMenuItem(onClick = {
-                    mSelectedTextTypeGas = item
-                    mExpandedTypeGas = false
-                }) {
-                    Text(text = item)
+                placeholder = { Text("Selecione Tipo de Combustivel") },
+                trailingIcon = {
+                    Icon(
+                        imageVector = if (mExpandedTypeGas) {
+                            Icons.Filled.KeyboardArrowUp
+                        } else {
+                            Icons.Filled.KeyboardArrowDown
+                        },
+                        contentDescription = "Icon Dropdown",
+                        modifier = Modifier.clickable { mExpandedTypeGas = !mExpandedTypeGas })
+                }
+            )
+            DropdownMenu(
+                expanded = mExpandedTypeGas,
+                onDismissRequest = { mExpandedTypeGas = false },
+                modifier = Modifier.width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
+            ) {
+                gasType.value?.forEach { item ->
+                    DropdownMenuItem(onClick = {
+                        mSelectedTextTypeGas = item.Descritivo
+                        mExpandedTypeGas = false
+                    }) {
+                        Text(text = item.Descritivo)
+                    }
                 }
             }
-        }
-        Spacer(modifier = Modifier.size(15.dp))
-        OutlinedTextField(
-            value = mSelectedTextTypeStation,
-            onValueChange = { mSelectedTextTypeStation = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .onGloballyPositioned { coordinates ->
-                    mTextFieldSize = coordinates.size.toSize()
-                },
-            placeholder = { Text("Selecione Marca do Posto:") },
-            trailingIcon = {
-                Icon(
-                    imageVector = if (mExpandedTypeStation) {
-                        Icons.Filled.KeyboardArrowUp
-                    } else {
-                        Icons.Filled.KeyboardArrowDown
+            Spacer(modifier = Modifier.size(15.dp))
+            OutlinedTextField(
+                value = mSelectedTextTypeStation,
+                onValueChange = { mSelectedTextTypeStation = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { coordinates ->
+                        mTextFieldSize = coordinates.size.toSize()
                     },
-                    contentDescription = "Icon Dropdown",
-                    modifier = Modifier.clickable { mExpandedTypeStation = !mExpandedTypeStation })
-            }
-        )
-        DropdownMenu(
-            expanded = mExpandedTypeStation,
-            onDismissRequest = { mExpandedTypeStation = false },
-            modifier = Modifier.width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
-        ) {
-            typeStation.forEach { item ->
-                DropdownMenuItem(onClick = {
-                    mSelectedTextTypeStation = item
-                    mExpandedTypeStation = false
-                }) {
-                    Text(text = item)
+                placeholder = { Text("Selecione Tipo de Posto") },
+                trailingIcon = {
+                    Icon(
+                        imageVector = if (mExpandedTypeStation) {
+                            Icons.Filled.KeyboardArrowUp
+                        } else {
+                            Icons.Filled.KeyboardArrowDown
+                        },
+                        contentDescription = "Icon Dropdown",
+                        modifier = Modifier.clickable {
+                            mExpandedTypeStation = !mExpandedTypeStation
+                        })
+                }
+            )
+            DropdownMenu(
+                expanded = mExpandedTypeStation,
+                onDismissRequest = { mExpandedTypeStation = false },
+                modifier = Modifier.width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
+            ) {
+                brands.value?.forEach { item ->
+                    DropdownMenuItem(onClick = {
+                        mSelectedTextTypeStation = item.Descritivo
+                        mExpandedTypeStation = false
+                    }) {
+                        Text(text = item.Descritivo)
+                    }
                 }
             }
-        }
-        Spacer(modifier = Modifier.size(15.dp))
-        OutlinedTextField(
-            value = mSelectedTextDistrict,
-            onValueChange = { mSelectedTextDistrict = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .onGloballyPositioned { coordinates ->
-                    mTextFieldSize = coordinates.size.toSize()
-                },
-            placeholder = { Text("Selecione Distrito") },
-            trailingIcon = {
-                Icon(
-                    imageVector = if (mExpandedDistrict) {
-                        Icons.Filled.KeyboardArrowUp
-                    } else {
-                        Icons.Filled.KeyboardArrowDown
+            Spacer(modifier = Modifier.size(15.dp))
+            OutlinedTextField(
+                value = mSelectedTextDistrict,
+                onValueChange = { mSelectedTextDistrict = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { coordinates ->
+                        mTextFieldSize = coordinates.size.toSize()
                     },
-                    contentDescription = "Icon Dropdown",
-                    modifier = Modifier.clickable { mExpandedDistrict = !mExpandedDistrict })
-            }
-        )
-        DropdownMenu(
-            expanded = mExpandedDistrict,
-            onDismissRequest = { mExpandedDistrict = false },
-            modifier = Modifier.width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
-        ) {
-            district.forEach { item ->
-                DropdownMenuItem(onClick = {
-                    mSelectedTextDistrict = item
-                    mExpandedDistrict = false
-                }) {
-                    Text(text = item)
+                placeholder = { Text("Selecione Distrito") },
+                trailingIcon = {
+                    Icon(
+                        imageVector = if (mExpandedDistrict) {
+                            Icons.Filled.KeyboardArrowUp
+                        } else {
+                            Icons.Filled.KeyboardArrowDown
+                        },
+                        contentDescription = "Icon Dropdown",
+                        modifier = Modifier.clickable { mExpandedDistrict = !mExpandedDistrict })
+                }
+            )
+            DropdownMenu(
+                expanded = mExpandedDistrict,
+                onDismissRequest = { mExpandedDistrict = false },
+                modifier = Modifier.width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
+            ) {
+                districts.value?.forEach { item ->
+                    DropdownMenuItem(onClick = {
+                        mSelectedTextDistrict = item.Descritivo
+                        aux = item.Id
+                        mExpandedDistrict = false
+                    }) {
+                        Text(text = item.Descritivo)
+                    }
                 }
             }
-        }
-        Spacer(modifier = Modifier.size(15.dp))
-        OutlinedTextField(
-            value = mSelectedTextCounty,
-            onValueChange = { mSelectedTextCounty = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .onGloballyPositioned { coordinates ->
-                    mTextFieldSize = coordinates.size.toSize()
-                },
-            placeholder = { Text("Selecione Municipio") },
-            trailingIcon = {
-                Icon(
-                    imageVector = if (mExpandedCounty) {
-                        Icons.Filled.KeyboardArrowUp
-                    } else {
-                        Icons.Filled.KeyboardArrowDown
+            Spacer(modifier = Modifier.size(15.dp))
+            OutlinedTextField(
+                value = mSelectedTextCounty,
+                onValueChange = { mSelectedTextCounty = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { coordinates ->
+                        mTextFieldSize = coordinates.size.toSize()
                     },
-                    contentDescription = "Icon Dropdown",
-                    modifier = Modifier.clickable { mExpandedCounty = !mExpandedCounty })
-            }
-        )
-        DropdownMenu(
-            expanded = mExpandedCounty,
-            onDismissRequest = { mExpandedCounty = false },
-            modifier = Modifier.width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
-        ) {
-            county.forEach { item ->
-                DropdownMenuItem(onClick = {
-                    mSelectedTextCounty = item
-                    mExpandedCounty = false
-                }) {
-                    Text(text = item)
+                placeholder = { Text("Selecione Municipio") },
+                trailingIcon = {
+                    Icon(
+                        imageVector = if (mExpandedCounty) {
+                            Icons.Filled.KeyboardArrowUp
+                        } else {
+                            Icons.Filled.KeyboardArrowDown
+                        },
+                        contentDescription = "Icon Dropdown",
+                        modifier = Modifier.clickable { mExpandedCounty = !mExpandedCounty })
+                }
+            )
+            DropdownMenu(
+                expanded = mExpandedCounty,
+                onDismissRequest = { mExpandedCounty = false },
+                modifier = Modifier.width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
+            ) {
+                countys.value?.forEach { item ->
+                    if (aux == item.IdDistrito) {
+                        DropdownMenuItem(onClick = {
+                            mSelectedTextCounty = item.Descritivo
+                            mExpandedCounty = false
+                        }) {
+                            Text(text = item.Descritivo)
+                        }
+                    }
                 }
             }
         }
         Spacer(modifier = Modifier.height(40.dp))
         Button(
             modifier = Modifier
-                .width(300.dp)
+                .fillMaxWidth()
                 .size(60.dp)
+                .padding(horizontal = 20.dp)
                 .align(Alignment.CenterHorizontally),
             colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
             border = BorderStroke(1.dp, Color.Black),
@@ -242,14 +270,15 @@ fun SearchStations(navController: NavController) {
         Spacer(modifier = Modifier.size(15.dp))
         Button(
             modifier = Modifier
-                .width(300.dp)
+                .fillMaxWidth()
                 .size(60.dp)
+                .padding(horizontal = 20.dp)
                 .align(Alignment.CenterHorizontally),
             colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
             border = BorderStroke(1.dp, Color.Black),
             shape = RoundedCornerShape(10.dp),
             onClick = { navController.navigate(NavigationItems.TopStations.route) }) {
-            Text(text = "Top Postos", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(text = "Postos Económicos", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
