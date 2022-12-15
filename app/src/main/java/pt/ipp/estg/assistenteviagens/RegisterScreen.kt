@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.assistenteviagens.room.userDatabase.UserViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabase.User
+import pt.ipp.estg.assistenteviagens.room.userDatabase.entitys.User
 import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 class RegisterScreen : ComponentActivity() {
@@ -57,6 +57,7 @@ fun Register() {
     var inputEmail by remember { mutableStateOf("") }
     var inputPass by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
+    val isLogin = false
 
     Column {
         Row() {
@@ -164,10 +165,9 @@ fun Register() {
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
                     if(inputName.isNotEmpty() && inputEmail.isNotEmpty() && inputPass.isNotEmpty()){
-                        userViewModel.insertUser(User(inputEmail, inputName, inputPass))
-
                         val intent = Intent(mContext, LoginScreen::class.java)
                         mContext.startActivity(intent)
+                        userViewModel.insertUser(User(inputEmail, inputName, inputPass, isLogin))
                     }else{
                         Toast.makeText(mContext, "The fields can´t by empty", Toast.LENGTH_LONG).show()
                     }

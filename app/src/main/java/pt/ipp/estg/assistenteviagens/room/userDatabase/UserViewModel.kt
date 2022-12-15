@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import pt.ipp.estg.assistenteviagens.room.userDatabase.entitys.User
 
 class UserViewModel(application: Application): AndroidViewModel(application) {
 
@@ -21,6 +22,12 @@ class UserViewModel(application: Application): AndroidViewModel(application) {
     fun insertUser(user: User){
         viewModelScope.launch(Dispatchers.IO) {
             repository.insertUser(user)
+        }
+    }
+
+    fun updateUser(user: User){
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateUser(user)
         }
     }
 
