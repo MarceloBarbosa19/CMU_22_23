@@ -41,6 +41,8 @@ import kotlinx.coroutines.launch
 import pt.ipp.estg.assistenteviagens.navigation.*
 import pt.ipp.estg.assistenteviagens.navigation.models.NavigationItems
 import pt.ipp.estg.assistenteviagens.navigation.screens.stations.*
+import pt.ipp.estg.assistenteviagens.room.userDatabase.UserViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabase.entitys.User
 import pt.ipp.estg.assistenteviagens.utils.searchButton.SearchAppBar
 import pt.ipp.estg.assistenteviagens.utils.searchButton.SearchViewModel
 import pt.ipp.estg.assistenteviagens.utils.searchButton.SearchWidgetState
@@ -166,6 +168,9 @@ fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState, onSearchClicked:
 
 @Composable
 fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: NavHostController) {
+    val userViewModel: UserViewModel = viewModel()
+    val users = userViewModel.readAllData.observeAsState()
+
     val items = listOf(
         NavigationItems.Home,
         NavigationItems.Favorites,
@@ -185,25 +190,28 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Column {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .height(100.dp)
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                )
-                Spacer(modifier = Modifier.size(10.dp))
-                //Dps vai buscar ao room
-                Text(
-                    text = "Marcelo Barbosa",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-                Spacer(modifier = Modifier.size(10.dp))
-                Divider(color = Color.Gray)
+            users.value?.forEach { user ->
+                if (user.isLogin) {
+                    Column {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
+                            contentDescription = "IconImage",
+                            modifier = Modifier
+                                .height(100.dp)
+                                .fillMaxWidth()
+                                .padding(10.dp)
+                        )
+                        Spacer(modifier = Modifier.size(10.dp))
+                        Text(
+                            text = user.fullName,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                        Spacer(modifier = Modifier.size(10.dp))
+                        Divider(color = Color.Gray)
+                    }
+                }
             }
         }
         val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -254,6 +262,9 @@ fun DrawerItem(item: NavigationItems, selected: Boolean, onItemClick: (Navigatio
 @Composable
 fun NavigationScreens(navController: NavHostController) {
     val mContext = LocalContext.current
+    val userViewModel: UserViewModel = viewModel()
+    val users = userViewModel.readAllData.observeAsState()
+
     NavHost(navController = navController, startDestination = NavigationItems.Home.route) {
         //Screens of Drawer
         composable(NavigationItems.Home.route) {
@@ -270,8 +281,13 @@ fun NavigationScreens(navController: NavHostController) {
         }
         composable(NavigationItems.Logout.route) {
             Column() {
-                val intent = Intent(mContext, LoginScreen::class.java)
-                mContext.startActivity(intent)
+                users.value?.forEach { user ->
+                    if(user.isLogin){
+                        val intent = Intent(mContext, LoginScreen::class.java)
+                        mContext.startActivity(intent)
+                        userViewModel.insertUser(User(user.email, user.fullName, user.password, false))
+                    }
+                }
             }
         }
         //Screens of Profile

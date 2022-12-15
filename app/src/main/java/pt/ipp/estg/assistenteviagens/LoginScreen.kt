@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.assistenteviagens.room.userDatabase.UserViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabase.entitys.User
 import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 class LoginScreen : ComponentActivity() {
@@ -50,7 +51,7 @@ class LoginScreen : ComponentActivity() {
 @Composable
 fun Login() {
     val userViewModel: UserViewModel = viewModel()
-    val users =  userViewModel.readAllData.observeAsState()
+    val users = userViewModel.readAllData.observeAsState()
 
     val mContext = LocalContext.current
     var inputEmail by remember { mutableStateOf("") }
@@ -164,13 +165,18 @@ fun Login() {
                 border = BorderStroke(1.dp, Color.Black),
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
-                    users.value?.forEach { user->
-                        if(inputEmail == user.email && inputPass == user.password){
+                    users.value?.forEach { user ->
+                        if (inputEmail == user.email && inputPass == user.password) {
                             val intent = Intent(mContext, Navigation::class.java)
                             mContext.startActivity(intent)
                             Toast.makeText(mContext, "Login Successfully", Toast.LENGTH_LONG).show()
-                        }else{
-                            Toast.makeText(mContext, "Error in Email or Password", Toast.LENGTH_LONG).show()
+                            userViewModel.insertUser(User(user.email, user.fullName, user.password, true))
+                        } else {
+                            Toast.makeText(
+                                mContext,
+                                "Error in Email or Password",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                 }) {
