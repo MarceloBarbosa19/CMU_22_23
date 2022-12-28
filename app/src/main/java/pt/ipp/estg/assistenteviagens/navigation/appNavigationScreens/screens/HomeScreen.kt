@@ -6,14 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddAlert
-import androidx.compose.material.icons.filled.LocalGasStation
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -23,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import pt.ipp.estg.assistenteviagens.R
+import pt.ipp.estg.assistenteviagens.maps.MapsGoogle
 
 @Composable
 fun HomeScreen() {
@@ -32,16 +29,11 @@ fun HomeScreen() {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.map_img),
-            contentDescription = "EXMap",
-            contentScale= ContentScale.FillBounds,
-            modifier = Modifier.fillMaxSize()
-        )
+        MapsGoogle()
         Image(
             modifier = Modifier
-                .padding(start = 350.dp, top = 530.dp)
-                .size(45.dp)
+                .padding(start = 372.dp, top = 9.dp)
+                .size(25.dp)
                 .clickable { dialogOpen = true }
             ,painter = painterResource(id = R.drawable.ic_baseline_add_alert_24),
             contentDescription = "IconAlert",
