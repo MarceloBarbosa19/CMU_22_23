@@ -39,13 +39,13 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import pt.ipp.estg.assistenteviagens.navigation.*
-import pt.ipp.estg.assistenteviagens.navigation.models.NavigationItems
-import pt.ipp.estg.assistenteviagens.navigation.screens.stations.*
+import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.models.NavigationItems
+import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.screens.stations.*
 import pt.ipp.estg.assistenteviagens.room.userDatabase.UserViewModel
 import pt.ipp.estg.assistenteviagens.room.userDatabase.entitys.User
-import pt.ipp.estg.assistenteviagens.utils.searchButton.SearchAppBar
-import pt.ipp.estg.assistenteviagens.utils.searchButton.SearchViewModel
-import pt.ipp.estg.assistenteviagens.utils.searchButton.SearchWidgetState
+import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchAppBar
+import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchViewModel
+import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchWidgetState
 import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 class Navigation : ComponentActivity() {
@@ -283,7 +283,7 @@ fun NavigationScreens(navController: NavHostController) {
             Column() {
                 users.value?.forEach { user ->
                     if(user.isLogin){
-                        val intent = Intent(mContext, LoginScreen::class.java)
+                        val intent = Intent(mContext, MainActivity::class.java)
                         mContext.startActivity(intent)
                         userViewModel.insertUser(User(user.email, user.fullName, user.password, false))
                     }
