@@ -5,14 +5,12 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -24,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -45,6 +44,38 @@ fun LoginScreen(navController: NavHostController) {
     var inputPass by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
 
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .background(colorResource(id = R.color.color_background_Drawer)),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = { navController.navigate(AuthNavigationItems.Home.route) }) {
+                Icon(
+                    Icons.Filled.ArrowBack,
+                    contentDescription = "ArrowBackIcon",
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(start = 5.dp)
+                )
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = AuthNavigationItems.Login.title,
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -65,7 +96,7 @@ fun LoginScreen(navController: NavHostController) {
             color = colorResource(id = R.color.color_text_login),
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
-        Spacer(modifier = Modifier.size(80.dp))
+        Spacer(modifier = Modifier.size(50.dp))
         OutlinedTextField(
             label = { Text(text = "Email Address") },
             value = inputEmail,
