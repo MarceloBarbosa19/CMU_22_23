@@ -98,6 +98,7 @@ fun NavigationScreen(searchViewModel: SearchViewModel) {
                 navController = navController
             )
         },
+        drawerGesturesEnabled = false
     ) {
         NavigationScreens(navController = navController)
     }

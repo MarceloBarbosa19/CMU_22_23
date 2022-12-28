@@ -168,10 +168,10 @@ fun LoginScreen(navController: NavHostController) {
                         userViewModel.insertUser(
                             User(user.email, user.fullName, user.password, true)
                         )
-                    } else {
-                        Toast.makeText(mContext, "Error in Email or Password", Toast.LENGTH_LONG)
-                            .show()
-                    }
+                    } //else {
+                       // Toast.makeText(mContext, "Error in Email or Password", Toast.LENGTH_LONG)
+                        //    .show()
+                   // }
                 }
             }) {
             Text(text = "Login", fontSize = 25.sp, fontWeight = FontWeight.Bold)
