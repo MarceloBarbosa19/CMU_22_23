@@ -43,7 +43,7 @@ fun RegisterScreen(navController: NavHostController) {
     var inputEmail by remember { mutableStateOf("") }
     var inputPass by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
-    val isLogin = false
+    val isLogin = true
 
     Box(
         modifier = Modifier

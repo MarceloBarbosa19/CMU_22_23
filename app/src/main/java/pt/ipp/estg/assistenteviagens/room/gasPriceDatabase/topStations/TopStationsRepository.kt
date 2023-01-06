@@ -12,7 +12,7 @@ class TopStationsRepository(val topStationsDao: TopStationsDao, val topStationsA
     }
 
     suspend fun updateTopStationsOnline(id: Int): Response<ResponseTopStations> {
-        return this.topStationsAPI.getListaTopPostos(id, 5)
+        return this.topStationsAPI.getTopStationsList(id, 5)
     }
 
     suspend fun insertTopStations(topStations: TopStationsDB){
