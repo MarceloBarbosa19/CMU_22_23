@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -19,26 +20,31 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import pt.ipp.estg.assistenteviagens.R
-import pt.ipp.estg.assistenteviagens.maps.MapsGoogle
+import pt.ipp.estg.assistenteviagens.maps.ScaffolMap
+import pt.ipp.estg.assistenteviagens.maps.LocationUtils.RequestPerms
+
 
 @Composable
 fun HomeScreen() {
     var dialogOpen by remember { mutableStateOf(false) }
     var carCrash by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        MapsGoogle()
-        Image(
+        RequestPerms(context)
+        ScaffolMap()
+        /*Image(
             modifier = Modifier
-                .padding(start = 372.dp, top = 9.dp)
+                .padding(start = 368.dp, top = 55.dp)
                 .size(25.dp)
                 .clickable { dialogOpen = true }
             ,painter = painterResource(id = R.drawable.ic_baseline_add_alert_24),
             contentDescription = "IconAlert",
-        )
+        )*/
     }
+    /*
     if (dialogOpen) {
         Dialog(
             onDismissRequest = { dialogOpen = false },
@@ -100,7 +106,8 @@ fun HomeScreen() {
             contentDescription = "IconCarCrash",
         )
     }
-    }
+    */
+}
 
 
 @Preview(showBackground = true)
