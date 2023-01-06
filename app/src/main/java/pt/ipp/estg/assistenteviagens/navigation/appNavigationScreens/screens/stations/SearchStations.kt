@@ -47,7 +47,10 @@ fun SearchStations(navController: NavController) {
     var mSelectedTextCounty by remember { mutableStateOf("") }
 
     var mTextFieldSize by remember { mutableStateOf(Size.Zero) }
-    var aux by remember { mutableStateOf(0) }
+    var auxComb by remember { mutableStateOf(0) }
+    var auxMarca by remember { mutableStateOf(0) }
+    var auxDist by remember { mutableStateOf(0) }
+    var auxMun by remember { mutableStateOf(0) }
 
     val gasTypesViewModel: GasTypeViewModel = viewModel()
     val brandsViewModel: BrandsViewModel = viewModel()
@@ -137,6 +140,7 @@ fun SearchStations(navController: NavController) {
                 gasType.value?.forEach { item ->
                     DropdownMenuItem(onClick = {
                         mSelectedTextTypeGas = item.Descritivo
+                        auxComb = item.Id
                         mExpandedTypeGas = false
                     }) {
                         Text(text = item.Descritivo)
@@ -174,6 +178,7 @@ fun SearchStations(navController: NavController) {
                 brands.value?.forEach { item ->
                     DropdownMenuItem(onClick = {
                         mSelectedTextTypeStation = item.Descritivo
+                        auxMarca = item.Id
                         mExpandedTypeStation = false
                     }) {
                         Text(text = item.Descritivo)
@@ -209,7 +214,7 @@ fun SearchStations(navController: NavController) {
                 districts.value?.forEach { item ->
                     DropdownMenuItem(onClick = {
                         mSelectedTextDistrict = item.Descritivo
-                        aux = item.Id
+                        auxDist = item.Id
                         mExpandedDistrict = false
                     }) {
                         Text(text = item.Descritivo)
@@ -243,9 +248,10 @@ fun SearchStations(navController: NavController) {
                 modifier = Modifier.width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
             ) {
                 countys.value?.forEach { item ->
-                    if (aux == item.IdDistrito) {
+                    if (auxDist == item.IdDistrito) {
                         DropdownMenuItem(onClick = {
                             mSelectedTextCounty = item.Descritivo
+                            auxMun = item.Id
                             mExpandedCounty = false
                         }) {
                             Text(text = item.Descritivo)
@@ -255,17 +261,43 @@ fun SearchStations(navController: NavController) {
             }
         }
         Spacer(modifier = Modifier.height(40.dp))
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .size(60.dp)
-                .padding(horizontal = 20.dp)
-                .align(Alignment.CenterHorizontally),
+        if (mSelectedTextTypeStation.isNotEmpty() &&
+            mSelectedTextTypeGas.isNotEmpty() &&
+            mSelectedTextDistrict.isNotEmpty() &&
+            mSelectedTextCounty.isNotEmpty()) {
+            Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .size(60.dp)
+                        .padding(horizontal = 20.dp)
+                        .align(Alignment.CenterHorizontally),
             colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
             border = BorderStroke(1.dp, Color.Black),
             shape = RoundedCornerShape(10.dp),
-            onClick = { navController.navigate(NavigationItems.FoundStation.route) }) {
-            Text(text = "Pesquisar", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            enabled = true,
+            onClick = {
+                navController.navigate(NavigationItems.FoundStation.route + "?auxComb=${auxComb}&auxMarca=${auxMarca}&auxDist=${auxDist}&auxMun=${auxMun}")
+            })
+            {
+                Text(text = "Pesquisar", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            }
+        }else{
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .size(60.dp)
+                    .padding(horizontal = 20.dp)
+                    .align(Alignment.CenterHorizontally),
+                colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
+                border = BorderStroke(1.dp, Color.Black),
+                shape = RoundedCornerShape(10.dp),
+                enabled = false,
+                onClick = {
+                    navController.navigate(NavigationItems.FoundStation.route + "?auxComb=${auxComb}&auxMarca=${auxMarca}&auxDist=${auxDist}&auxMun=${auxMun}")
+                })
+            {
+                Text(text = "Pesquisar", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            }
         }
         Spacer(modifier = Modifier.size(15.dp))
         Button(

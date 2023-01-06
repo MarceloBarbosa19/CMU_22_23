@@ -1,31 +1,35 @@
 package pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.screens.stations
 
-import android.annotation.SuppressLint
-import androidx.compose.foundation.*
+import android.util.Log
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import pt.ipp.estg.assistenteviagens.R
-import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.models.NavigationItems
+import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.stationsData.StationsDataViewModel
 
-@SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
-fun InfoStation(navController: NavController) {
-    val isFavorite by remember { mutableStateOf(false) }
-
+fun InfoStation(navController: NavController, stationID: Int, stationName: String) {
+    var isFavorite by remember { mutableStateOf(false) }
+    val infoTypeViewModel: StationsDataViewModel = viewModel()
+    val info = infoTypeViewModel.getStationsData(stationID).observeAsState()
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -33,235 +37,206 @@ fun InfoStation(navController: NavController) {
             .padding(10.dp)
             .verticalScroll(rememberScrollState()),
     ) {
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            text = "E.LECLERC FAFE",
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "Informações de Posto",
-                fontSize = 18.sp,
-                color = colorResource(id = R.color.color_text_login),
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = { /*TODO 1 CLICK (SAVE IN ROOM) - 2 CLICK (DELETE IN ROOM)*/ }) {
-                if (isFavorite) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_star_24),
-                        contentDescription = "IconFavorite",
+        info.value?.let { item ->
+            if (stationName == item.Nome) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = item.Nome,
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "Informações de Posto",
+                        fontSize = 18.sp,
+                        color = colorResource(id = R.color.color_text_login),
                     )
-                } else {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_outline_star_outline_24),
-                        contentDescription = "IconFavorite",
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(onClick = { /*TODO 1 CLICK (SAVE IN ROOM) - 2 CLICK (DELETE IN ROOM)*/ }) {
+                        if (isFavorite) {
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = "IconFavorite",
+                            )
+                            //isFavorite = false
+                        } else {
+                            Icon(
+                                imageVector = Icons.Outlined.Star,
+                                contentDescription = "IconFavorite",
+                            )
+                            //isFavorite = true
+                        }
+                    }
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                ) {
+                    Text(
+                        text = "Morada:",
+                        fontSize = 18.sp,
+                        color = colorResource(id = R.color.color_buttons),
                     )
+                    Text(
+                        modifier = Modifier.padding(horizontal = 10.dp),
+                        text = "${item.Morada}, ${item.codPostal} ${item.municipio}",
+                        fontSize = 18.sp,
+                    )
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Text(
+                        text = "Marca:",
+                        fontSize = 18.sp,
+                        color = colorResource(id = R.color.color_buttons),
+                    )
+                    Text(
+                        modifier = Modifier.padding(horizontal = 10.dp),
+                        text = item.Marca,
+                        fontSize = 18.sp,
+                    )
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Text(
+                        text = "Horários:",
+                        fontSize = 18.sp,
+                        color = colorResource(id = R.color.color_buttons),
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = "Dias Uteis:",
+                                fontSize = 18.sp,
+                                color = colorResource(id = R.color.color_buttons),
+                            )
+                            Text(
+                                text = item.diasUteis,
+                                fontSize = 18.sp,
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = "Feriados:",
+                                fontSize = 18.sp,
+                                color = colorResource(id = R.color.color_buttons),
+                            )
+                            Text(
+                                text = item.feriado,
+                                fontSize = 18.sp,
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = "Sabados:",
+                                fontSize = 18.sp,
+                                color = colorResource(id = R.color.color_buttons),
+                            )
+                            Text(
+                                text = item.sabado,
+                                fontSize = 18.sp,
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = "Domingos:",
+                                fontSize = 18.sp,
+                                color = colorResource(id = R.color.color_buttons),
+                            )
+                            Text(
+                                text = item.domingo,
+                                fontSize = 18.sp,
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Text(
+                        text = "Modo de Pagamento:",
+                        fontSize = 18.sp,
+                        color = colorResource(id = R.color.color_buttons),
+                    )
+                    Text(
+                        modifier = Modifier.padding(horizontal = 10.dp),
+                        text = item.MeiosPagamento,
+                        fontSize = 18.sp,
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp)
+                            .background(
+                                color = colorResource(id = R.color.color_background_Drawer),
+                                shape = RoundedCornerShape(20.dp)
+                            ),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Combustiveis",
+                            fontSize = 18.sp,
+                            color = colorResource(id = R.color.color_text_login),
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = item.tipoCombustivel,
+                                fontSize = 18.sp,
+                                color = colorResource(id = R.color.color_buttons),
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = item.preco,
+                                fontSize = 18.sp,
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(5.dp))
+                Button(
+                    modifier = Modifier
+                        .width(300.dp)
+                        .size(60.dp)
+                        .align(Alignment.CenterHorizontally),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
+                    border = BorderStroke(1.dp, Color.Black),
+                    shape = RoundedCornerShape(10.dp),
+                    onClick = {/* TODO */ }
+                ) {
+                    Text(text = "Ver no mapa", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
             }
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-        ) {
-            Text(
-                text = "Morada:",
-                fontSize = 18.sp,
-                color = colorResource(id = R.color.color_buttons),
-            )
-            Text(
-                text = "R. Cidade de Guimarães, 4820-178 Fafe",
-                fontSize = 18.sp,
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            Text(
-                text = "Marca:",
-                fontSize = 18.sp,
-                color = colorResource(id = R.color.color_buttons),
-            )
-            Text(
-                text = "E-Leclerc",
-                fontSize = 18.sp,
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            Text(
-                text = "Dias Uteis:",
-                fontSize = 18.sp,
-                color = colorResource(id = R.color.color_buttons),
-            )
-            Text(
-                text = "Aberto 24 horas",
-                fontSize = 18.sp,
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            Text(
-                text = "Feriados:",
-                fontSize = 18.sp,
-                color = colorResource(id = R.color.color_buttons),
-            )
-            Text(
-                text = "Aberto 24 horas",
-                fontSize = 18.sp,
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            Text(
-                text = "Sabados:",
-                fontSize = 18.sp,
-                color = colorResource(id = R.color.color_buttons),
-            )
-            Text(
-                text = "Aberto 24 horas",
-                fontSize = 18.sp,
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            Text(
-                text = "Domingos:",
-                fontSize = 18.sp,
-                color = colorResource(id = R.color.color_buttons),
-            )
-            Text(
-                text = "Aberto 24 horas",
-                fontSize = 18.sp,
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            Text(
-                text = "Modo de Pagamento:",
-                fontSize = 18.sp,
-                color = colorResource(id = R.color.color_buttons),
-            )
-            Text(
-                text = "Dineiro",
-                fontSize = 18.sp,
-            )
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-                .background(
-                    color = colorResource(id = R.color.color_background_Drawer),
-                    shape = RoundedCornerShape(20.dp)
-                ),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Combustiveis",
-                fontSize = 18.sp,
-                color = colorResource(id = R.color.color_text_login),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "GPL Auto:",
-                    fontSize = 18.sp,
-                    color = colorResource(id = R.color.color_buttons),
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "0,899 €/litro",
-                    fontSize = 18.sp,
-                )
-            }
-            Spacer(modifier = Modifier.height(5.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "Gasóleo simples:",
-                    fontSize = 18.sp,
-                    color = colorResource(id = R.color.color_buttons),
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "1,639 €/litro",
-                    fontSize = 18.sp,
-                )
-            }
-            Spacer(modifier = Modifier.height(5.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "Gasóleo especial:",
-                    fontSize = 18.sp,
-                    color = colorResource(id = R.color.color_buttons),
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "1,659 €/litro",
-                    fontSize = 18.sp,
-                )
-            }
-            Spacer(modifier = Modifier.height(5.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "Gasolina simples 95:",
-                    fontSize = 18.sp,
-                    color = colorResource(id = R.color.color_buttons),
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "1,639 €/litro",
-                    fontSize = 18.sp,
-                )
-            }
-            Spacer(modifier = Modifier.height(5.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "Gasolina 98:",
-                    fontSize = 18.sp,
-                    color = colorResource(id = R.color.color_buttons),
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "1,799 €/litro",
-                    fontSize = 18.sp,
-                )
-            }
-            Spacer(modifier = Modifier.height(5.dp))
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Button(
-            modifier = Modifier
-                .width(300.dp)
-                .size(60.dp)
-                .align(Alignment.CenterHorizontally),
-            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
-            border = BorderStroke(1.dp, Color.Black),
-            shape = RoundedCornerShape(10.dp),
-            onClick = { navController.navigate(NavigationItems.LocalizationStation.route) }) {
-            Text(text = "Ver no mapa", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         }
     }
 }

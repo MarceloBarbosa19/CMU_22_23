@@ -21,9 +21,7 @@ class TopStationsViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun getAllTopStations(id: Int): LiveData<List<TopStationsDB>> {
-        viewModelScope.launch(Dispatchers.IO) {
-            updateTopStationOnline(id);
-        }
+        updateTopStationOnline(id);
         return repository.getTopStations()
     }
 

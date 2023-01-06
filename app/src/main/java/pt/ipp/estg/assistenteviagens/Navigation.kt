@@ -12,12 +12,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,10 +31,12 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import pt.ipp.estg.assistenteviagens.navigation.*
@@ -46,6 +47,7 @@ import pt.ipp.estg.assistenteviagens.room.userDatabase.entitys.User
 import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchAppBar
 import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchViewModel
 import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchWidgetState
+import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.topStations.TopStationsViewModel
 import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 class Navigation : ComponentActivity() {
@@ -137,7 +139,12 @@ fun MainAppBar(
 }
 
 @Composable
-fun TopBar(scope: CoroutineScope, scaffoldState: ScaffoldState, onSearchClicked: () -> Unit, navController: NavController) {
+fun TopBar(
+    scope: CoroutineScope,
+    scaffoldState: ScaffoldState,
+    onSearchClicked: () -> Unit,
+    navController: NavController
+) {
     TopAppBar(
         title = { Text(text = "") },
         navigationIcon = {
@@ -187,30 +194,43 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(160.dp),
+                .height(179.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             users.value?.forEach { user ->
                 if (user.isLogin) {
-                    Column {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
-                            contentDescription = "IconImage",
+                    Box {
+                        IconButton(
+                            onClick = { scope.launch { scaffoldState.drawerState.close() } },
                             modifier = Modifier
-                                .height(100.dp)
-                                .fillMaxWidth()
-                                .padding(10.dp)
-                        )
-                        Spacer(modifier = Modifier.size(10.dp))
-                        Text(
-                            text = user.fullName,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        )
-                        Spacer(modifier = Modifier.size(10.dp))
-                        Divider(color = Color.Gray)
+                                .align(Alignment.TopEnd)
+                                .padding(end = 10.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "CloseIcon",
+                            )
+                        }
+                        Column( modifier = Modifier.padding(top = 30.dp)) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
+                                contentDescription = "IconImage",
+                                modifier = Modifier
+                                    .height(100.dp)
+                                    .fillMaxWidth()
+                                    .padding(5.dp)
+                            )
+                            Spacer(modifier = Modifier.size(10.dp))
+                            Text(
+                                text = user.fullName,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                            )
+                            Spacer(modifier = Modifier.size(10.dp))
+                            Divider(color = Color.Gray)
+                        }
                     }
                 }
             }
@@ -230,6 +250,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
                 }
                 scope.launch { scaffoldState.drawerState.close() }
             })
+            Divider(color = Color.Gray)
         }
     }
 }
@@ -281,12 +302,19 @@ fun NavigationScreens(navController: NavHostController) {
             SettingsScreen()
         }
         composable(NavigationItems.Logout.route) {
-            Column() {
+            Column {
                 users.value?.forEach { user ->
-                    if(user.isLogin){
+                    if (user.isLogin) {
                         val intent = Intent(mContext, MainActivity::class.java)
                         mContext.startActivity(intent)
-                        userViewModel.insertUser(User(user.email, user.fullName, user.password, false))
+                        userViewModel.insertUser(
+                            User(
+                                user.email,
+                                user.fullName,
+                                user.password,
+                                false
+                            )
+                        )
                     }
                 }
             }
@@ -300,16 +328,34 @@ fun NavigationScreens(navController: NavHostController) {
             SearchStations(navController)
         }
         composable(NavigationItems.TopStations.route) {
-            TopStations()
+            TopStations(navController)
         }
-        composable(NavigationItems.FoundStation.route) {
-            FoundStation(navController)
+        composable(
+            NavigationItems.FoundStation.route + "?auxComb={auxComb}&auxMarca={auxMarca}&auxDist={auxDist}&auxMun={auxMun}",
+            arguments = listOf(
+                navArgument("auxComb") { type = NavType.IntType },
+                navArgument("auxMarca") { type = NavType.IntType },
+                navArgument("auxDist") { type = NavType.IntType },
+                navArgument("auxMun") { type = NavType.IntType }),
+        ) { backStackEntry ->
+            val combID = backStackEntry.arguments?.getInt("auxComb") as Int
+            val marcaID = backStackEntry.arguments?.getInt("auxMarca") as Int
+            val distID = backStackEntry.arguments?.getInt("auxDist") as Int
+            val munID = backStackEntry.arguments?.getInt("auxMun") as Int
+            FoundStation(navController, combID, marcaID, distID, munID)
         }
-        composable(NavigationItems.InfoStation.route) {
-            InfoStation(navController)
+        composable(
+            NavigationItems.InfoStation.route + "?stationID={stationID}&stationNome={stationNome}",
+            arguments = listOf(
+                navArgument("stationID") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val stID = backStackEntry.arguments?.getInt("stationID") as Int
+            val stNome = backStackEntry.arguments?.getString("stationNome") as String
+            InfoStation(navController, stID, stNome)
         }
-        composable(NavigationItems.LocalizationStation.route) {
-            LocalizationStation()
+        composable(NavigationItems.InfoStationByName.route + "?stationNome={stationNome}") { backStackEntry ->
+            val stNome = backStackEntry.arguments?.getString("stationNome") as String
+            InfoStationByName(navController, stNome)
         }
     }
 }
