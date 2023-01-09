@@ -31,8 +31,8 @@ import pt.ipp.estg.assistenteviagens.Navigation
 import pt.ipp.estg.assistenteviagens.R
 import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.models.NavigationItems
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.AuthNavigationItems
-import pt.ipp.estg.assistenteviagens.room.userDatabase.UserViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabase.entitys.User
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.entitys.User
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
@@ -166,12 +166,9 @@ fun LoginScreen(navController: NavHostController) {
                         val intent = Intent(mContext, Navigation::class.java)
                         mContext.startActivity(intent)
                         userViewModel.insertUser(
-                            User(user.email, user.fullName, user.password, true)
+                            User(user.email, user.fullName, user.description ,user.password, true)
                         )
-                    } //else {
-                       // Toast.makeText(mContext, "Error in Email or Password", Toast.LENGTH_LONG)
-                        //    .show()
-                   // }
+                    }
                 }
             }) {
             Text(text = "Login", fontSize = 25.sp, fontWeight = FontWeight.Bold)

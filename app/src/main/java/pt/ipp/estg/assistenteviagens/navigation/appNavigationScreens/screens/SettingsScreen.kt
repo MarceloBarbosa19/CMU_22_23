@@ -1,21 +1,25 @@
 package pt.ipp.estg.assistenteviagens.navigation
 
+import android.content.Intent
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -24,33 +28,50 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pt.ipp.estg.assistenteviagens.MainActivity
+import pt.ipp.estg.assistenteviagens.Navigation
 import pt.ipp.estg.assistenteviagens.R
-import pt.ipp.estg.assistenteviagens.room.userDatabase.UserViewModel
+import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.gasType.GasTypeViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.carDatabase.CarViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.carDatabase.entitys.Car
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.entitys.User
 
 @Composable
 fun SettingsScreen() {
+    val mContext = LocalContext.current
     val userViewModel: UserViewModel = viewModel()
     val users = userViewModel.readAllData.observeAsState()
-    var inputName by remember { mutableStateOf("") }
-    var inputEmail by remember { mutableStateOf("") }
-    var inputPasswordAntiga by remember { mutableStateOf("") }
-    var inputPasswordNova by remember { mutableStateOf("") }
-    var inputPasswordNova1 by remember { mutableStateOf("") }
-    var showPasswordAntiga by remember { mutableStateOf(false) }
-    var showPasswordNova by remember { mutableStateOf(false) }
-    var showPasswordNova1 by remember { mutableStateOf(false) }
-    var inputDescription by remember { mutableStateOf("") }
-    var inputBrand by remember { mutableStateOf("") }
-    var inputFuel by remember { mutableStateOf("") }
-    var dialogOpen by remember { mutableStateOf(false) }
-    var dialogOpenRemove by remember { mutableStateOf(false) }
-    var dialogOpenPassword by remember { mutableStateOf(false) }
-    var dialogOpenDelete by remember { mutableStateOf(false) }
+    val carViewModel: CarViewModel = viewModel()
+    val car = carViewModel.readAllData.observeAsState()
+    val gasTypesViewModel: GasTypeViewModel = viewModel()
+    val gasType = gasTypesViewModel.getAllGasTypes().observeAsState()
+
 
     users.value?.forEach { item ->
+        var inputName by remember { mutableStateOf(item.fullName) }
+        var inputEmail by remember { mutableStateOf(item.email) }
+        var inputDescription by remember { mutableStateOf(item.description) }
+        var inputPasswordAntiga by remember { mutableStateOf("") }
+        var inputPasswordNova by remember { mutableStateOf("") }
+        var inputPasswordNova1 by remember { mutableStateOf("") }
+        var showPasswordAntiga by remember { mutableStateOf(false) }
+        var showPasswordNova by remember { mutableStateOf(false) }
+        var showPasswordNova1 by remember { mutableStateOf(false) }
+        var inputBrand by remember { mutableStateOf("") }
+        var mSelectedTextTypeGas by remember { mutableStateOf("") }
+        var mExpandedTypeGas by remember { mutableStateOf(false) }
+        var mTextFieldSize by remember { mutableStateOf(Size.Zero) }
+        var dialogOpen by remember { mutableStateOf(false) }
+        var dialogOpenRemove by remember { mutableStateOf(false) }
+        var dialogOpenPassword by remember { mutableStateOf(false) }
+        var dialogOpenDelete by remember { mutableStateOf(false) }
+        var brandCar by remember { mutableStateOf("") }
+
         if (item.isLogin) {
             Column(
                 modifier = Modifier
@@ -73,7 +94,7 @@ fun SettingsScreen() {
                         .width(330.dp)
                         .height(60.dp),
                     label = { Text(text = "Full name") },
-                    value = item.fullName,
+                    value = inputName,
                     onValueChange = { inputName = it },
                     leadingIcon = {
                         Image(
@@ -120,49 +141,31 @@ fun SettingsScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 60.dp, end = 60.dp)
-                )
-                {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
-                            contentDescription = "IconArrow"
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Renault Clio - Gasoleo",
-                            fontSize = 15.sp,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Image(
-                            modifier = Modifier.clickable { dialogOpenRemove = true },
-                            painter = painterResource(id = R.drawable.ic_baseline_remove_24),
-                            contentDescription = "IconRemove"
-                        )
+                ) {
+                    car.value?.forEach { car ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
+                                contentDescription = "IconArrow"
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = "${car.car_Brand} - ${car.car_Fuel}",
+                                fontSize = 15.sp,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Image(
+                                modifier = Modifier.clickable { brandCar = car.car_Brand ; dialogOpenRemove = true },
+                                painter = painterResource(id = R.drawable.ic_baseline_remove_24),
+                                contentDescription = "IconRemove"
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
                     }
                     Spacer(modifier = Modifier.height(10.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
-                            contentDescription = "IconArrow"
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Kia - Gasolina",
-                            fontSize = 15.sp,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Image(
-                            modifier = Modifier.clickable { dialogOpenRemove = true },
-                            painter = painterResource(id = R.drawable.ic_baseline_remove_24),
-                            contentDescription = "IconRemove"
-                        )
-                    }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 Column(
@@ -175,7 +178,7 @@ fun SettingsScreen() {
                             .width(330.dp)
                             .height(60.dp),
                         label = { Text(text = "Email") },
-                        value = item.email,
+                        value = inputEmail,
                         onValueChange = { inputEmail = it },
                         leadingIcon = {
                             Icon(
@@ -198,7 +201,17 @@ fun SettingsScreen() {
                         colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
                         border = BorderStroke(1.dp, Color.Black),
                         shape = RoundedCornerShape(5.dp),
-                        onClick = { /*TODO*/ }) {
+                        onClick = {
+                            userViewModel.insertUser(
+                                User(
+                                    inputEmail,
+                                    inputName,
+                                    inputDescription,
+                                    item.password,
+                                    item.isLogin
+                                )
+                            )
+                        }) {
                         Text(text = "Save Changes", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                     }
                     Spacer(modifier = Modifier.height(14.dp))
@@ -258,7 +271,6 @@ fun SettingsScreen() {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        //dps fazer o retrofit para fazer uma lista de postos com o determinado combustivel mais barato, por agora vai assim
                         Row {
                             OutlinedTextField(
                                 modifier = Modifier
@@ -270,15 +282,41 @@ fun SettingsScreen() {
                             )
                         }
                         Spacer(modifier = Modifier.size(5.dp))
-                        Row {
-                            OutlinedTextField(
-                                modifier = Modifier
-                                    .width(330.dp)
-                                    .height(60.dp),
-                                label = { Text(text = "Fuel") },
-                                value = inputFuel,
-                                onValueChange = { inputFuel = it }
-                            )
+                        OutlinedTextField(
+                            value = mSelectedTextTypeGas,
+                            onValueChange = { mSelectedTextTypeGas = it },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .onGloballyPositioned { coordinates ->
+                                    mTextFieldSize = coordinates.size.toSize()
+                                },
+                            placeholder = { Text("Selecione Tipo de Combustivel") },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = if (mExpandedTypeGas) {
+                                        Icons.Filled.KeyboardArrowUp
+                                    } else {
+                                        Icons.Filled.KeyboardArrowDown
+                                    },
+                                    contentDescription = "Icon Dropdown",
+                                    modifier = Modifier.clickable {
+                                        mExpandedTypeGas = !mExpandedTypeGas
+                                    })
+                            }
+                        )
+                        DropdownMenu(
+                            expanded = mExpandedTypeGas,
+                            onDismissRequest = { mExpandedTypeGas = false },
+                            modifier = Modifier.width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
+                        ) {
+                            gasType.value?.forEach { item ->
+                                DropdownMenuItem(onClick = {
+                                    mSelectedTextTypeGas = item.Descritivo
+                                    mExpandedTypeGas = false
+                                }) {
+                                    Text(text = item.Descritivo)
+                                }
+                            }
                         }
                         Spacer(modifier = Modifier.size(15.dp))
                         Row() {
@@ -290,7 +328,14 @@ fun SettingsScreen() {
                                 ),
                                 border = BorderStroke(1.dp, Color.Black),
                                 shape = RoundedCornerShape(5.dp),
-                                onClick = { dialogOpen = false }) {
+                                onClick = {
+                                    carViewModel.insertCar(
+                                        Car(
+                                            inputBrand,
+                                            mSelectedTextTypeGas
+                                        )
+                                    );dialogOpen = false
+                                }) {
                                 Text(text = "ADD", fontSize = 15.sp, fontWeight = FontWeight.Bold)
                             }
                             Spacer(modifier = Modifier.width(20.dp))
@@ -332,7 +377,6 @@ fun SettingsScreen() {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        //dps fazer o retrofit para fazer uma lista de postos com o determinado combustivel mais barato, por agora vai assim
                         Text(text = "Are you sure you want delete this vehicle?", fontSize = 20.sp)
                         Spacer(modifier = Modifier.size(15.dp))
                         Row() {
@@ -344,7 +388,21 @@ fun SettingsScreen() {
                                 ),
                                 border = BorderStroke(1.dp, Color.Black),
                                 shape = RoundedCornerShape(5.dp),
-                                onClick = { dialogOpenRemove = false }) {
+                                onClick = { /* TODO - ESTE REMOVER NAO ESTA CORRETO */
+                                    car.value?.forEach { car ->
+                                        Log.d("bd car:", car.car_Brand)
+                                        Log.d("variavel car:", brandCar)
+                                        if(brandCar == car.car_Brand){
+                                            Log.d("Equal?? :",
+                                                (brandCar == car.car_Brand).toString()
+                                            )
+                                            carViewModel.deleteCar(
+                                                Car(car.car_Brand, car.car_Fuel)
+                                            )
+                                        }
+                                    }
+                                    dialogOpenRemove = false
+                                }) {
                                 Text(text = "Yes", fontSize = 15.sp, fontWeight = FontWeight.Bold)
                             }
                             Spacer(modifier = Modifier.width(20.dp))
@@ -473,7 +531,6 @@ fun SettingsScreen() {
                                     contentDescription = "IconPassword"
                                 )
                             },
-
                             visualTransformation = if (showPasswordNova1) {
                                 VisualTransformation.None
                             } else {
@@ -505,7 +562,25 @@ fun SettingsScreen() {
                                 ),
                                 border = BorderStroke(1.dp, Color.Black),
                                 shape = RoundedCornerShape(5.dp),
-                                onClick = { dialogOpenPassword = false }) {
+                                onClick = {
+                                    if (inputPasswordAntiga == item.password && inputPasswordNova == inputPasswordNova1) {
+                                        userViewModel.insertUser(
+                                            User(
+                                                item.email,
+                                                item.fullName,
+                                                item.description,
+                                                inputPasswordNova,
+                                                item.isLogin
+                                            )
+                                        ); dialogOpenPassword = false
+                                    } else {
+                                        Toast.makeText(
+                                            mContext,
+                                            "Password doesn't match",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                }) {
                                 Text(
                                     text = "Update",
                                     fontSize = 15.sp,
@@ -555,7 +630,6 @@ fun SettingsScreen() {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        //dps fazer o retrofit para fazer uma lista de postos com o determinado combustivel mais barato, por agora vai assim
                         Text(text = "Are you sure you want delete this account?", fontSize = 20.sp)
                         Spacer(modifier = Modifier.size(15.dp))
                         Row() {
@@ -567,7 +641,19 @@ fun SettingsScreen() {
                                 ),
                                 border = BorderStroke(1.dp, Color.Black),
                                 shape = RoundedCornerShape(5.dp),
-                                onClick = { dialogOpenDelete = false }) {
+                                onClick = {
+                                    val intent = Intent(mContext, MainActivity::class.java)
+                                    mContext.startActivity(intent)
+                                    userViewModel.deleteUser(
+                                        User(
+                                            item.email,
+                                            item.fullName,
+                                            item.description,
+                                            item.password,
+                                            item.isLogin
+                                        )
+                                    ); dialogOpenDelete = false
+                                }) {
                                 Text(text = "Yes", fontSize = 15.sp, fontWeight = FontWeight.Bold)
                             }
                             Spacer(modifier = Modifier.width(20.dp))
@@ -594,5 +680,4 @@ fun SettingsScreen() {
 @Composable
 fun PreviewSettingsScreen() {
     SettingsScreen()
-
 }

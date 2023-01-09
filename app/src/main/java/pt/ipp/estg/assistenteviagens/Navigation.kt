@@ -42,8 +42,8 @@ import kotlinx.coroutines.launch
 import pt.ipp.estg.assistenteviagens.navigation.*
 import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.models.NavigationItems
 import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.screens.stations.*
-import pt.ipp.estg.assistenteviagens.room.userDatabase.UserViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabase.entitys.User
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.entitys.User
 import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchAppBar
 import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchViewModel
 import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchWidgetState
@@ -311,6 +311,7 @@ fun NavigationScreens(navController: NavHostController) {
                             User(
                                 user.email,
                                 user.fullName,
+                                user.description,
                                 user.password,
                                 false
                             )

@@ -31,8 +31,8 @@ import androidx.navigation.NavHostController
 import pt.ipp.estg.assistenteviagens.Navigation
 import pt.ipp.estg.assistenteviagens.R
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.AuthNavigationItems
-import pt.ipp.estg.assistenteviagens.room.userDatabase.UserViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabase.entitys.User
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.entitys.User
 
 @Composable
 fun RegisterScreen(navController: NavHostController) {
@@ -41,6 +41,7 @@ fun RegisterScreen(navController: NavHostController) {
 
     var inputName by remember { mutableStateOf("") }
     var inputEmail by remember { mutableStateOf("") }
+    var inputDescription by remember { mutableStateOf("") }
     var inputPass by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
     val isLogin = true
@@ -161,7 +162,7 @@ fun RegisterScreen(navController: NavHostController) {
                 if (inputName.isNotEmpty() && inputEmail.isNotEmpty() && inputPass.isNotEmpty()) {
                     val intent = Intent(mContext, Navigation::class.java)
                     mContext.startActivity(intent)
-                    userViewModel.insertUser(User(inputEmail, inputName, inputPass, isLogin))
+                    userViewModel.insertUser(User(inputEmail, inputName, inputDescription ,inputPass, isLogin))
                 } else {
                     Toast.makeText(mContext, "The fields can´t by empty", Toast.LENGTH_LONG).show()
                 }

@@ -85,7 +85,7 @@ fun MapScreen(newLocation: Location) {
         IconButton(
             onClick =  { properties = if (properties == properties.copy(mapType = MapType.NORMAL)) {
                 satelite = false;
-                properties.copy(mapType = MapType.SATELLITE)
+                properties.copy(mapType = MapType.HYBRID)
             } else {
                 satelite = true;
                 properties.copy(mapType = MapType.NORMAL)

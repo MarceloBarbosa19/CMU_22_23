@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import pt.ipp.estg.assistenteviagens.R
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.FavoriteViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.entitys.Favorite
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.stationsData.StationsDataViewModel
 
 @Composable
@@ -30,6 +32,7 @@ fun InfoStation(navController: NavController, stationID: Int, stationName: Strin
     var isFavorite by remember { mutableStateOf(false) }
     val infoTypeViewModel: StationsDataViewModel = viewModel()
     val info = infoTypeViewModel.getStationsData(stationID).observeAsState()
+    val favoriteViewModel: FavoriteViewModel = viewModel()
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -59,20 +62,13 @@ fun InfoStation(navController: NavController, stationID: Int, stationName: Strin
                         color = colorResource(id = R.color.color_text_login),
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = { /*TODO 1 CLICK (SAVE IN ROOM) - 2 CLICK (DELETE IN ROOM)*/ }) {
-                        if (isFavorite) {
-                            Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = "IconFavorite",
-                            )
-                            //isFavorite = false
-                        } else {
-                            Icon(
-                                imageVector = Icons.Outlined.Star,
-                                contentDescription = "IconFavorite",
-                            )
-                            //isFavorite = true
-                        }
+                    IconButton(onClick = {
+                            favoriteViewModel.insertFavorite(Favorite(stationID, item.Nome))
+                    }) {
+                        Icon(
+                            contentDescription = "IconFavorite",
+                            imageVector =Icons.Default.Star
+                        )
                     }
                 }
                 Column(

@@ -1,6 +1,5 @@
 package pt.ipp.estg.assistenteviagens.navigation
 
-import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -10,13 +9,12 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Newspaper
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -26,37 +24,64 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import pt.ipp.estg.assistenteviagens.Navigation
+import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.assistenteviagens.R
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.FavoriteViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.entitys.Favorite
+import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.stationsData.StationsDataViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
 
 
 @Composable
 fun FavoritesScreen() {
+    var idValue by remember { mutableStateOf(0) }
     var dialogOpenDetails by remember { mutableStateOf(false) }
+    val favoriteViewModel: FavoriteViewModel = viewModel()
+    val favorite = favoriteViewModel.readAllData.observeAsState()
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-    ){
+    ) {
         Text(
-            modifier= Modifier
+            modifier = Modifier
                 .padding(vertical = 40.dp, horizontal = 20.dp),
-            text= "Favoritos:", fontSize= 35.sp, fontWeight = FontWeight.Bold
+            text = "Favoritos:", fontSize = 35.sp, fontWeight = FontWeight.Bold
         )
-        Row(modifier = Modifier
-            .padding(horizontal = 50.dp)) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                contentDescription = "IconCar"
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            ClickableText(
-                text = AnnotatedString("E.LECLERC FAFE"),
-                onClick = { dialogOpenDetails = true }
-            )
+        favorite.value?.forEach { item ->
+            Divider(color = Color.Gray)
+            Spacer(modifier = Modifier.height(5.dp))
+            Row(
+                modifier = Modifier.padding(horizontal = 50.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    modifier = Modifier.size(13.dp),
+                    painter = painterResource(id = R.drawable.ic_baseline_circle_24),
+                    contentDescription = "IconDot"
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                ClickableText(
+                    text = AnnotatedString(item.name),
+                    onClick = { dialogOpenDetails = true; idValue = item.fav_Id }
+                )
+                Spacer(modifier = Modifier.weight(1F))
+                IconButton(onClick = {
+                    favoriteViewModel.deleteFavorite(Favorite(item.fav_Id, item.name))
+                }) {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "closeIcon"
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(5.dp))
+            Divider(color = Color.Gray)
         }
     }
-    if(dialogOpenDetails){
+    if (dialogOpenDetails) {
         Dialog(
             onDismissRequest = { dialogOpenDetails = false },
             properties = DialogProperties(
@@ -77,89 +102,172 @@ fun FavoritesScreen() {
                         .fillMaxHeight()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    //dps fazer o retrofit para fazer uma lista de postos com o determinado combustivel mais barato, por agora vai assim
                     Row() {
-                        Text(text = "Informações do posto", fontSize = 20.sp,fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.padding(horizontal = 30.dp))
-                        Image(painter = painterResource(id = R.drawable.ic_baseline_star_24),
-                            contentDescription = "IconStar")
+                        Text(
+                            text = "Informações do posto",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
-                    Spacer(modifier = Modifier.height(15.dp))
-                    Column() {
-                        Text(text = "Morada:", color = Color.Blue)
-                        Text(text = "XXXXXXXXXXXXX")
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Column() {
-                        Text(text = "Marca:", color = Color.Blue)
-                        Text(text = "XXXXXXXXXXXXX")
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Column() {
-                        Text(text = "Dias Uteis:", color = Color.Blue)
-                        Text(text = "XXXXXXXXXXXXX")
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Column() {
-                        Text(text = "Feriados:", color = Color.Blue)
-                        Text(text = "XXXXXXXXXXXXX")
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Column() {
-                        Text(text = "Sabados:", color = Color.Blue)
-                        Text(text = "XXXXXXXXXXXXX")
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Column() {
-                        Text(text = "Domingos:", color = Color.Blue)
-                        Text(text = "XXXXXXXXXXXXX")
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Column() {
-                        Text(text = "Modos de pagamentos:", color = Color.Blue)
-                        Text(text = "XXXXXXXXXXXXX")
-                    }
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Row() {
-                        Text(text = "Combustiveis", fontSize = 20.sp,fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.padding(horizontal = 65.dp))
-                        Image(painter = painterResource(id = R.drawable.ic_baseline_local_gas_station_24),
-                            contentDescription = "IconGasStation")
-                    }
-                    Spacer(modifier = Modifier.height(15.dp))
-                    Column() {
-                        Text(text = "Gasóleo Simples:", color = Color.Blue)
-                        Text(text = "XXXXXXXXXXXXX")
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Column() {
-                        Text(text = "Gasóleo Aditivado:", color = Color.Blue)
-                        Text(text = "XXXXXXXXXXXXX")
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Column() {
-                        Text(text = "Gasolina 95:", color = Color.Blue)
-                        Text(text = "XXXXXXXXXXXXX")
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Column() {
-                        Text(text = "Gasolina 98:", color = Color.Blue)
-                        Text(text = "XXXXXXXXXXXXX")
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Button(
-                        modifier=Modifier.align(Alignment.CenterHorizontally),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
-                        border = BorderStroke(1.dp, Color.Black),
-                        shape = RoundedCornerShape(5.dp),
-                        onClick = { }) {
-                        Text(text = "Ver no mapa", fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    val infoTypeViewModel: StationsDataViewModel = viewModel()
+                    val info = infoTypeViewModel.getStationsData(idValue).observeAsState()
+                    info.value?.let { inf ->
+                        Text(
+                            text = "Morada:",
+                            fontSize = 18.sp,
+                            color = colorResource(id = R.color.color_buttons),
+                        )
+                        Text(
+                            modifier = Modifier.padding(horizontal = 10.dp),
+                            text = "${inf.Morada}, ${inf.codPostal} ${inf.municipio}",
+                            fontSize = 18.sp,
+                        )
+                        Spacer(modifier = Modifier.height(15.dp))
+                        Text(
+                            text = "Marca:",
+                            fontSize = 18.sp,
+                            color = colorResource(id = R.color.color_buttons),
+                        )
+                        Text(
+                            modifier = Modifier.padding(horizontal = 10.dp),
+                            text = inf.Marca,
+                            fontSize = 18.sp,
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = "Horários:",
+                            fontSize = 18.sp,
+                            color = colorResource(id = R.color.color_buttons),
+                        )
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = "Dias Uteis:",
+                                    fontSize = 18.sp,
+                                    color = colorResource(id = R.color.color_buttons),
+                                )
+                                Text(
+                                    text = inf.diasUteis,
+                                    fontSize = 18.sp,
+                                )
+                            }
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = "Feriados:",
+                                    fontSize = 18.sp,
+                                    color = colorResource(id = R.color.color_buttons),
+                                )
+                                Text(
+                                    text = inf.feriado,
+                                    fontSize = 18.sp,
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = "Sabados:",
+                                    fontSize = 18.sp,
+                                    color = colorResource(id = R.color.color_buttons),
+                                )
+                                Text(
+                                    text = inf.sabado,
+                                    fontSize = 18.sp,
+                                )
+                            }
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = "Domingos:",
+                                    fontSize = 18.sp,
+                                    color = colorResource(id = R.color.color_buttons),
+                                )
+                                Text(
+                                    text = inf.domingo,
+                                    fontSize = 18.sp,
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = "Modo de Pagamento:",
+                            fontSize = 18.sp,
+                            color = colorResource(id = R.color.color_buttons),
+                        )
+                        Text(
+                            modifier = Modifier.padding(horizontal = 10.dp),
+                            text = inf.MeiosPagamento,
+                            fontSize = 18.sp,
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Row() {
+                            Text(
+                                text = "Combustiveis",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.weight(1F))
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_baseline_local_gas_station_24),
+                                contentDescription = "IconGasStation"
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(15.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = inf.tipoCombustivel,
+                                fontSize = 18.sp,
+                                color = colorResource(id = R.color.color_buttons),
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(text = inf.preco, fontSize = 18.sp)
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Button(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = colorResource(
+                                    id = R.color.color_buttons
+                                )
+                            ),
+                            border = BorderStroke(1.dp, Color.Black),
+                            shape = RoundedCornerShape(5.dp),
+                            onClick = { }) {
+                            Text(
+                                text = "Ver no mapa",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             }
         }
     }
-
 }
 
 @Preview(showBackground = true)
