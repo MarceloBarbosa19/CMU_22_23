@@ -20,13 +20,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ipp.estg.assistenteviagens.R
-import pt.ipp.estg.assistenteviagens.room.userDatabase.UserViewModel
+import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.gasType.GasTypeViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.carDatabase.CarViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
 
 @Preview
 @Composable
 fun ProfileScreen() {
     val userViewModel: UserViewModel = viewModel()
     val users = userViewModel.readAllData.observeAsState()
+    val carViewModel: CarViewModel = viewModel()
+    val car = carViewModel.readAllData.observeAsState()
+
 
     Column(
         modifier = Modifier
@@ -43,7 +48,7 @@ fun ProfileScreen() {
                         .size(200.dp)
                         .clip(RoundedCornerShape(percent = 10)),
                     painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
-                    contentDescription = "Profileicon",
+                    contentDescription = "ProfileIcon",
                     contentScale = ContentScale.Fit,
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -63,7 +68,7 @@ fun ProfileScreen() {
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "Small Description of the User",
+                        text = user.description,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -89,32 +94,23 @@ fun ProfileScreen() {
                         .fillMaxWidth()
                         .padding(vertical = 10.dp, horizontal = 80.dp)
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
-                            contentDescription = "IconArrow"
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Renault Clio - Gasoleo",
-                            fontSize = 15.sp,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
-                            contentDescription = "IconArrow"
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Kia - Gasolina", fontSize = 15.sp, modifier = Modifier.weight(1f))
+                    car.value?.forEach { car->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
+                                contentDescription = "IconArrow"
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "${car.car_Brand} - ${car.car_Fuel}",
+                                fontSize = 15.sp,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
                     }
                 }
             }
