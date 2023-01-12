@@ -12,6 +12,7 @@ sealed class NavigationItems(
     object Favorites: NavigationItems("favorites", R.drawable.ic_outline_star_outline_24, "Favoritos")
     object Suggest: NavigationItems("suggest", R.drawable.ic_outline_add_circle_outline_24, "Sugestões")
     object Settings: NavigationItems("settings", R.drawable.ic_outline_settings_24, "Settings")
+    object Contact: NavigationItems("contact", R.drawable.ic_baseline_perm_contact_calendar_24, "Contact")
     object Logout: NavigationItems("logout", R.drawable.ic_baseline_login_24, "Logout")
 
     object SearchStation: NavigationItems("searchStation", R.drawable.ic_baseline_local_gas_station_24, "SearchStation")
