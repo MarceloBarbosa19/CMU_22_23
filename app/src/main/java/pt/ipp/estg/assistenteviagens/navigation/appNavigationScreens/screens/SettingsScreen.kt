@@ -38,6 +38,8 @@ import pt.ipp.estg.assistenteviagens.R
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.gasType.GasTypeViewModel
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.carDatabase.CarViewModel
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.carDatabase.entitys.Car
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.FavoriteViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.entitys.Favorite
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.entitys.User
 
@@ -47,7 +49,9 @@ fun SettingsScreen() {
     val userViewModel: UserViewModel = viewModel()
     val users = userViewModel.readAllData.observeAsState()
     val carViewModel: CarViewModel = viewModel()
-    val car = carViewModel.readAllData.observeAsState()
+    val cars = carViewModel.readAllData.observeAsState()
+    val favoriteViewModel: FavoriteViewModel = viewModel()
+    val favorites = favoriteViewModel.readAllData.observeAsState()
     val gasTypesViewModel: GasTypeViewModel = viewModel()
     val gasType = gasTypesViewModel.getAllGasTypes().observeAsState()
 
@@ -142,27 +146,31 @@ fun SettingsScreen() {
                         .fillMaxWidth()
                         .padding(start = 60.dp, end = 60.dp)
                 ) {
-                    car.value?.forEach { car ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
-                                contentDescription = "IconArrow"
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Text(
-                                text = "${car.car_Brand} - ${car.car_Fuel}",
-                                fontSize = 15.sp,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Image(
-                                modifier = Modifier.clickable { brandCar = car.car_Brand ; dialogOpenRemove = true },
-                                painter = painterResource(id = R.drawable.ic_baseline_remove_24),
-                                contentDescription = "IconRemove"
-                            )
-                            Spacer(modifier = Modifier.height(10.dp))
+                    cars.value?.forEach { car ->
+                        if (item.email == car.email) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
+                                    contentDescription = "IconArrow"
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = "${car.car_Brand} - ${car.car_Fuel}",
+                                    fontSize = 15.sp,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                Image(
+                                    modifier = Modifier.clickable {
+                                        brandCar = car.car_Brand; dialogOpenRemove = true
+                                    },
+                                    painter = painterResource(id = R.drawable.ic_baseline_remove_24),
+                                    contentDescription = "IconRemove"
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(10.dp))
@@ -329,12 +337,14 @@ fun SettingsScreen() {
                                 border = BorderStroke(1.dp, Color.Black),
                                 shape = RoundedCornerShape(5.dp),
                                 onClick = {
-                                    carViewModel.insertCar(
-                                        Car(
-                                            inputBrand,
-                                            mSelectedTextTypeGas
-                                        )
-                                    );dialogOpen = false
+                                    users.value?.forEach { user ->
+                                        if (user.isLogin) {
+                                            carViewModel.insertCar(
+                                                Car(user.email, inputBrand, mSelectedTextTypeGas)
+                                            )
+                                        }
+                                    }
+                                    dialogOpen = false
                                 }) {
                                 Text(text = "ADD", fontSize = 15.sp, fontWeight = FontWeight.Bold)
                             }
@@ -388,17 +398,14 @@ fun SettingsScreen() {
                                 ),
                                 border = BorderStroke(1.dp, Color.Black),
                                 shape = RoundedCornerShape(5.dp),
-                                onClick = { /* TODO - ESTE REMOVER NAO ESTA CORRETO */
-                                    car.value?.forEach { car ->
-                                        Log.d("bd car:", car.car_Brand)
-                                        Log.d("variavel car:", brandCar)
-                                        if(brandCar == car.car_Brand){
-                                            Log.d("Equal?? :",
-                                                (brandCar == car.car_Brand).toString()
-                                            )
-                                            carViewModel.deleteCar(
-                                                Car(car.car_Brand, car.car_Fuel)
-                                            )
+                                onClick = {
+                                    users.value?.forEach { user ->
+                                        cars.value?.forEach { car ->
+                                            if (brandCar == car.car_Brand && user.email == car.email) {
+                                                carViewModel.deleteCar(
+                                                    Car(user.email, car.car_Brand, car.car_Fuel)
+                                                )
+                                            }
                                         }
                                     }
                                     dialogOpenRemove = false
@@ -644,15 +651,38 @@ fun SettingsScreen() {
                                 onClick = {
                                     val intent = Intent(mContext, MainActivity::class.java)
                                     mContext.startActivity(intent)
-                                    userViewModel.deleteUser(
-                                        User(
-                                            item.email,
-                                            item.fullName,
-                                            item.description,
-                                            item.password,
-                                            item.isLogin
-                                        )
-                                    ); dialogOpenDelete = false
+                                    users.value?.forEach { user ->
+                                        favorites.value?.forEach { favorite ->
+                                            cars.value?.forEach { car ->
+                                                if (user.isLogin && user.email == favorite.email && user.email == car.email) {
+                                                    userViewModel.deleteUser(
+                                                        User(
+                                                            item.email,
+                                                            item.fullName,
+                                                            item.description,
+                                                            item.password,
+                                                            item.isLogin
+                                                        )
+                                                    )
+                                                    favoriteViewModel.deleteFavorite(
+                                                        Favorite(
+                                                            favorite.fav_Id,
+                                                            item.email,
+                                                            favorite.name
+                                                        )
+                                                    )
+                                                    carViewModel.deleteCar(
+                                                        Car(
+                                                            item.email,
+                                                            car.car_Brand,
+                                                            car.car_Fuel
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                    dialogOpenDelete = false
                                 }) {
                                 Text(text = "Yes", fontSize = 15.sp, fontWeight = FontWeight.Bold)
                             }

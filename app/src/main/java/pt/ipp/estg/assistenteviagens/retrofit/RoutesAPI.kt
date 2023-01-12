@@ -28,12 +28,12 @@ interface RoutesAPI {
     suspend fun getTopStationsList(
         @Query("idsTiposComb") idsComb: Int,
         @Query("qtdPorPagina") qtd: Int,
-    ):Response<ResponseTopStations>
+    ): Response<ResponseTopStations>
 
     @GET("GetDadosPosto?")
     suspend fun getStationsData(
         @Query("id") id: Int,
-    ):Response<ResponseStationsData>
+    ): Response<ResponseStationsData>
 
     @GET("ListarDadosPostos?")
     suspend fun getStationsList(
@@ -41,5 +41,8 @@ interface RoutesAPI {
         @Query("idMarca") idMarca: Int,
         @Query("idDistrito") idDistrito: Int,
         @Query("idsMunicipios") idsMunicipios: Int,
-    ):Response<ResponseStationsSearch>
+    ): Response<ResponseStationsSearch>
+
+    @GET("ListarDadosPostos?")
+    suspend fun getAllStationsList(@Query("idsMunicipios") idsMunicipios: Int): Response<ResponseStationsSearch>
 }

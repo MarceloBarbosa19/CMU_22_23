@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Car(
     @PrimaryKey
+    val email: String,
     val car_Brand: String,
     val car_Fuel: String,
 ){

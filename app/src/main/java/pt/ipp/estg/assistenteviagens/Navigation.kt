@@ -48,7 +48,6 @@ import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.ent
 import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchAppBar
 import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchViewModel
 import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchWidgetState
-import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.topStations.TopStationsViewModel
 import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 class Navigation : ComponentActivity() {
@@ -214,7 +213,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
                                 contentDescription = "CloseIcon",
                             )
                         }
-                        Column( modifier = Modifier.padding(top = 30.dp)) {
+                        Column(modifier = Modifier.padding(top = 30.dp)) {
                             Image(
                                 painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
                                 contentDescription = "IconImage",
@@ -359,13 +358,13 @@ fun NavigationScreens(navController: NavHostController) {
             val stNome = backStackEntry.arguments?.getString("stationNome") as String
             InfoStation(navController, stID, stNome)
         }
-        composable(NavigationItems.InfoStationByName.route + "?stationNome={stationNome}") { backStackEntry ->
+        composable(
+            NavigationItems.InfoStationByName.route + "?stationID={stationID}&stationNome={stationNome}",
+            arguments = listOf(navArgument("stationID") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val stID = backStackEntry.arguments?.getInt("stationID") as Int
             val stNome = backStackEntry.arguments?.getString("stationNome") as String
-            InfoStationByName(navController, stNome)
+            InfoStationByName(navController, stID, stNome)
         }
     }
 }
-
-
-
-

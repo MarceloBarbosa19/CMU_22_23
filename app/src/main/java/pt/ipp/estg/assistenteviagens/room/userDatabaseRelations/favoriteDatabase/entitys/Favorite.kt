@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class Favorite(
     @PrimaryKey
     val fav_Id: Int,
+    val email: String,
     val name: String
 )

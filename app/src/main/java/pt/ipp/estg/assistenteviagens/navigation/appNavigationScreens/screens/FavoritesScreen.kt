@@ -36,8 +36,12 @@ import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.Use
 fun FavoritesScreen() {
     var idValue by remember { mutableStateOf(0) }
     var dialogOpenDetails by remember { mutableStateOf(false) }
+
+    val userViewModel: UserViewModel = viewModel()
+    val users = userViewModel.readAllData.observeAsState()
     val favoriteViewModel: FavoriteViewModel = viewModel()
     val favorite = favoriteViewModel.readAllData.observeAsState()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -48,37 +52,45 @@ fun FavoritesScreen() {
                 .padding(vertical = 40.dp, horizontal = 20.dp),
             text = "Favoritos:", fontSize = 35.sp, fontWeight = FontWeight.Bold
         )
-        favorite.value?.forEach { item ->
-            Divider(color = Color.Gray)
-            Spacer(modifier = Modifier.height(5.dp))
-            Row(
-                modifier = Modifier.padding(horizontal = 50.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    modifier = Modifier.size(13.dp),
-                    painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                    contentDescription = "IconDot"
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                ClickableText(
-                    text = AnnotatedString(item.name),
-                    onClick = { dialogOpenDetails = true; idValue = item.fav_Id }
-                )
-                Spacer(modifier = Modifier.weight(1F))
-                IconButton(onClick = {
-                    favoriteViewModel.deleteFavorite(Favorite(item.fav_Id, item.name))
-                }) {
-                    Icon(
-                        modifier = Modifier.size(20.dp),
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "closeIcon"
-                    )
+        users.value?.forEach { user ->
+            favorite.value?.forEach { item ->
+                if (user.isLogin && item.email == user.email) {
+                    Divider(color = Color.Gray)
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Row(
+                        modifier = Modifier.padding(horizontal = 50.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            modifier = Modifier.size(13.dp),
+                            painter = painterResource(id = R.drawable.ic_baseline_circle_24),
+                            contentDescription = "IconDot"
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        ClickableText(
+                            text = AnnotatedString(item.name),
+                            onClick = { dialogOpenDetails = true; idValue = item.fav_Id }
+                        )
+                        Spacer(modifier = Modifier.weight(1F))
+                        IconButton(onClick = {
+                            favoriteViewModel.deleteFavorite(
+                                Favorite(
+                                    item.fav_Id, item.email, item.name
+                                )
+                            )
+                        }) {
+                            Icon(
+                                modifier = Modifier.size(20.dp),
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "closeIcon"
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Divider(color = Color.Gray)
                 }
             }
-            Spacer(modifier = Modifier.height(5.dp))
-            Divider(color = Color.Gray)
         }
     }
     if (dialogOpenDetails) {

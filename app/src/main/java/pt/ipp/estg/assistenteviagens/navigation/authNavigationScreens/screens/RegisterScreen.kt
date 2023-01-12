@@ -1,7 +1,13 @@
 package pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.screens
 
+<<<<<<< HEAD
+import android.app.NotificationChannel
+import android.app.NotificationManager
+=======
+>>>>>>> 1a47d371352006f7af02dfdda78a60f37619bddf
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
@@ -27,6 +33,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.NotificationCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import pt.ipp.estg.assistenteviagens.Navigation
@@ -42,13 +49,29 @@ import androidx.compose.material.Snackbar
 fun RegisterScreen(navController: NavHostController) {
     val userViewModel: UserViewModel = viewModel()
     val mContext = LocalContext.current
-
     var inputName by remember { mutableStateOf("") }
     var inputEmail by remember { mutableStateOf("") }
     var inputDescription by remember { mutableStateOf("") }
     var inputPass by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
     val isLogin = true
+
+    val notificationManager =
+        mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val channel = NotificationChannel(
+            "channel_id",
+            "channel_name",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        notificationManager.createNotificationChannel(channel)
+    }
+    val notification = NotificationCompat.Builder(mContext, "channel_id")
+        .setSmallIcon(R.drawable.ic_baseline_notifications_active_24)
+        .setContentTitle("WhereYouWantToGo?")
+        .setContentText("Registado com Sucesso")
+        .setAutoCancel(true)
+        .build()
 
     Box(
         modifier = Modifier
@@ -167,7 +190,11 @@ fun RegisterScreen(navController: NavHostController) {
                     val intent = Intent(mContext, Navigation::class.java)
                     mContext.startActivity(intent)
                     userViewModel.insertUser(User(inputEmail, inputName, inputDescription ,inputPass, isLogin))
+<<<<<<< HEAD
+                    notificationManager.notify(1, notification)
+=======
 
+>>>>>>> 1a47d371352006f7af02dfdda78a60f37619bddf
                 } else {
                     Toast.makeText(mContext, "The fields can´t by empty", Toast.LENGTH_LONG).show()
                 }

@@ -27,7 +27,7 @@ fun FoundStation(navController: NavController, combID: Int, marcaID: Int, distID
     val mContext = LocalContext.current
     val pesquisaViewModel: StationsSearchViewModel = viewModel()
     val pesquisa =
-        pesquisaViewModel.getAllSearchStations(combID, marcaID, distID, munID).observeAsState()
+        pesquisaViewModel.getSearchStations(combID, marcaID, distID, munID).observeAsState()
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -50,7 +50,7 @@ fun FoundStation(navController: NavController, combID: Int, marcaID: Int, distID
                             shape = RoundedCornerShape(20.dp)
                         )
                         .clickable {
-                            navController.navigate(NavigationItems.InfoStationByName.route + "?stationNome=${item.Nome}")
+                            navController.navigate(NavigationItems.InfoStationByName.route + "?stationID=${item.Id}&stationNome=${item.Nome}")
                         },
                     verticalArrangement = Arrangement.Center
                 ) {

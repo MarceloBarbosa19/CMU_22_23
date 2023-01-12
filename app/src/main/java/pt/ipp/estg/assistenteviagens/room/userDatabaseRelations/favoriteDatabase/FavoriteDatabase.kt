@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.entitys.Favorite
 
-@Database(entities = [Favorite::class], version = 3)
+@Database(entities = [Favorite::class], version = 4)
 abstract class FavoriteDatabase: RoomDatabase() {
     abstract fun favoriteDao(): FavoriteDao
 
