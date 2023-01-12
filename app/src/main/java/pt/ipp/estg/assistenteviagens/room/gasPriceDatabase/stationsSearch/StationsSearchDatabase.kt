@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import pt.ipp.estg.assistenteviagens.retrofit.stationsSearch.StationsSearch
 
-@Database(entities = [StationsSearchDB::class], version = 2)
+@Database(entities = [StationsSearchDB::class], version = 3)
 abstract class StationsSearchDatabase : RoomDatabase(){
 
     abstract fun getStationsSearchDao(): StationsSearchDao

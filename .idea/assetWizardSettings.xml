@@ -307,7 +307,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/circle/baseline_circle_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/notifications_active/baseline_notifications_active_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -317,8 +317,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_baseline_circle_24" />
-                            <entry key="sourceFile" value="/C:\Users\Utilizador\Desktop\uni\22_23\1_semestre\CMU\Trabalho\cmuproject_grupo10" />
+                            <entry key="color" value="3970ff" />
+                            <entry key="outputName" value="ic_baseline_notifications_active_24" />
+                            <entry key="sourceFile" value="C:\Users\Utilizador\Desktop\uni\22_23\1_semestre\CMU\Trabalho\cmuproject_grupo10" />
                           </map>
                         </option>
                       </PersistentState>

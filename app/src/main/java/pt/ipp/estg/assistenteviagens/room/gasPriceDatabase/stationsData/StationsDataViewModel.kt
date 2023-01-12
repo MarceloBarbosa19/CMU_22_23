@@ -28,6 +28,9 @@ class StationsDataViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun getStationsDataByName(name:String): LiveData<StationsDataDB> {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getStationsDataByName(name)
+        }
         return repository.getStationsDataByName(name)
     }
 

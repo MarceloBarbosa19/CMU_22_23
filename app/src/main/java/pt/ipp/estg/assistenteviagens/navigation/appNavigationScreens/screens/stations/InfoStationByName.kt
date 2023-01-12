@@ -9,7 +9,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -22,14 +21,24 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import pt.ipp.estg.assistenteviagens.R
+import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.models.NavigationItems
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.stationsData.StationsDataViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.FavoriteViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.entitys.Favorite
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.markersDatabase.oneStation.Marker
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.markersDatabase.oneStation.MarkerViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
 
 
 @Composable
-fun InfoStationByName(navController: NavController, stationName: String) {
-    var isFavorite by remember { mutableStateOf(false) }
+fun InfoStationByName(navController: NavController, stationID: Int, stationName: String) {
+    val userViewModel: UserViewModel = viewModel()
+    val users = userViewModel.readAllData.observeAsState()
     val infoTypeViewModel: StationsDataViewModel = viewModel()
     val info = infoTypeViewModel.getStationsDataByName(stationName).observeAsState()
+    val favoriteViewModel: FavoriteViewModel = viewModel()
+    val favorite = favoriteViewModel.readAllData.observeAsState()
+    val markerViewModel: MarkerViewModel = viewModel()
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -58,20 +67,19 @@ fun InfoStationByName(navController: NavController, stationName: String) {
                     color = colorResource(id = R.color.color_text_login),
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                IconButton(onClick = { /*TODO 1 CLICK (SAVE IN ROOM) - 2 CLICK (DELETE IN ROOM)*/ }) {
-                    if (isFavorite) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = "IconFavorite",
-                        )
-                        //isFavorite = false
-                    } else {
-                        Icon(
-                            imageVector = Icons.Outlined.Star,
-                            contentDescription = "IconFavorite",
-                        )
-                        //isFavorite = true
+                IconButton(onClick = {
+                    users.value?.forEach { user ->
+                        if (user.isLogin) {
+                            favoriteViewModel.insertFavorite(
+                                Favorite(stationID, user.email, item.Nome)
+                            )
+                        }
                     }
+                }) {
+                    Icon(
+                        contentDescription = "IconFavorite",
+                        imageVector = Icons.Default.Star
+                    )
                 }
             }
             Column(
@@ -231,7 +239,11 @@ fun InfoStationByName(navController: NavController, stationName: String) {
                 colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
                 border = BorderStroke(1.dp, Color.Black),
                 shape = RoundedCornerShape(10.dp),
-                onClick = {/* TODO */ }
+                onClick = {
+                    markerViewModel.deleteAllMarker();
+                    markerViewModel.insertMarker(Marker(item.Nome, item.Latitude, item.Longitude));
+                    navController.navigate(NavigationItems.Home.route)
+                }
             ) {
                 Text(text = "Ver no mapa", fontSize = 20.sp, fontWeight = FontWeight.Bold)
             }

@@ -19,7 +19,7 @@ class StationsSearchViewModel(application: Application) : AndroidViewModel(appli
         deleteAllPesquisa()
     }
 
-    fun getAllSearchStations(
+    fun getSearchStations(
         idsTiposComb: Int,
         idMarca: Int,
         idDistrito: Int,
@@ -27,6 +27,13 @@ class StationsSearchViewModel(application: Application) : AndroidViewModel(appli
     ): LiveData<List<StationsSearchDB>> {
         viewModelScope.launch(Dispatchers.IO) {
             updateStationsSearchOnline(idsTiposComb, idMarca, idDistrito, idsMunicipios);
+        }
+        return repository.getStationsSearch()
+    }
+
+    fun getAllSearchStations(idsMunicipios: Int): LiveData<List<StationsSearchDB>> {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateAllStationsSearchOnline(idsMunicipios);
         }
         return repository.getStationsSearch()
     }
@@ -52,6 +59,19 @@ class StationsSearchViewModel(application: Application) : AndroidViewModel(appli
         viewModelScope.launch(Dispatchers.IO) {
             val response =
                 repository.updateStationsSearchOnline(idsTiposComb, idMarca, idDistrito, idsMunicipios)
+            if (response.isSuccessful) {
+                val content = response.body()
+                content?.resultado?.forEach {
+                    insertSearchStations(StationsSearchDB(it.Id, it.Nome))
+                }
+            }
+        }
+    }
+
+    fun updateAllStationsSearchOnline(idsMunicipios: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val response =
+                repository.updateStationsSearchOnline(idsMunicipios)
             if (response.isSuccessful) {
                 val content = response.body()
                 content?.resultado?.forEach {

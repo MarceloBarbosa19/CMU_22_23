@@ -5,6 +5,6 @@ data class AddressDB(
     val CodPostal: String,
     val Distrito: String,
     val Municipio: String,
-    val Latitude: String,
-    val Longitude: String,
+    val Latitude: Double,
+    val Longitude: Double,
 )

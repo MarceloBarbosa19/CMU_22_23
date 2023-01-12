@@ -2,7 +2,6 @@ package pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.carDatabase.entitys.Car
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.entitys.User
 
 @Dao

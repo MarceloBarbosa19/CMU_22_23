@@ -19,6 +19,10 @@ class StationsSearchRepository(val stationsSearchDao: StationsSearchDao, val sta
         return this.stationsSearchAPI.getStationsList(idsTiposComb, idMarca, idDistrito, idsMunicipios)
     }
 
+    suspend fun updateStationsSearchOnline(idsMunicipios: Int): Response<ResponseStationsSearch> {
+        return this.stationsSearchAPI.getAllStationsList(idsMunicipios)
+    }
+
     suspend fun insertStationsSearch(pesquisa: StationsSearchDB) {
         stationsSearchDao.insertStationsSearch(pesquisa)
     }

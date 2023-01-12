@@ -95,20 +95,22 @@ fun ProfileScreen() {
                         .padding(vertical = 10.dp, horizontal = 80.dp)
                 ) {
                     car.value?.forEach { car->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
-                                contentDescription = "IconArrow"
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "${car.car_Brand} - ${car.car_Fuel}",
-                                fontSize = 15.sp,
-                                modifier = Modifier.weight(1f)
-                            )
+                        if(car.email == user.email){
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
+                                    contentDescription = "IconArrow"
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "${car.car_Brand} - ${car.car_Fuel}",
+                                    fontSize = 15.sp,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
                         }
                         Spacer(modifier = Modifier.height(10.dp))
                     }
