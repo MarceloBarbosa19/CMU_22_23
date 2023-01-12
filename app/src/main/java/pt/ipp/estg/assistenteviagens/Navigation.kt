@@ -41,6 +41,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import pt.ipp.estg.assistenteviagens.navigation.*
 import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.models.NavigationItems
+import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.screens.ContactScreen
 import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.screens.stations.*
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.entitys.User
@@ -184,6 +185,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
         NavigationItems.Favorites,
         NavigationItems.Suggest,
         NavigationItems.Settings,
+        NavigationItems.Contact,
         NavigationItems.Logout,
     )
     Column(
@@ -301,6 +303,9 @@ fun NavigationScreens(navController: NavHostController) {
         composable(NavigationItems.Settings.route) {
             SettingsScreen()
         }
+        composable(NavigationItems.Contact.route) {
+            ContactScreen()
+        }
         composable(NavigationItems.Logout.route) {
             Column {
                 users.value?.forEach { user ->
@@ -360,3 +365,7 @@ fun NavigationScreens(navController: NavHostController) {
         }
     }
 }
+
+
+
+

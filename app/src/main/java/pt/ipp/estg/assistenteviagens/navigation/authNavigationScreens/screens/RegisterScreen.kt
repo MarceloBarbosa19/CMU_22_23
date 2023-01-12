@@ -1,5 +1,6 @@
 package pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.screens
 
+import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -33,6 +34,9 @@ import pt.ipp.estg.assistenteviagens.R
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.AuthNavigationItems
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.entitys.User
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Snackbar
+
 
 @Composable
 fun RegisterScreen(navController: NavHostController) {
@@ -163,6 +167,7 @@ fun RegisterScreen(navController: NavHostController) {
                     val intent = Intent(mContext, Navigation::class.java)
                     mContext.startActivity(intent)
                     userViewModel.insertUser(User(inputEmail, inputName, inputDescription ,inputPass, isLogin))
+
                 } else {
                     Toast.makeText(mContext, "The fields can´t by empty", Toast.LENGTH_LONG).show()
                 }
@@ -203,3 +208,4 @@ fun RegisterScreen(navController: NavHostController) {
         }
     }
 }
+
