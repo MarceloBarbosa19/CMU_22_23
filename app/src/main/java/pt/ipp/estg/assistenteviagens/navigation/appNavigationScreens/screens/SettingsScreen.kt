@@ -56,10 +56,10 @@ fun SettingsScreen() {
     val gasType = gasTypesViewModel.getAllGasTypes().observeAsState()
 
 
-    users.value?.forEach { item ->
-        var inputName by remember { mutableStateOf(item.fullName) }
-        var inputEmail by remember { mutableStateOf(item.email) }
-        var inputDescription by remember { mutableStateOf(item.description) }
+    users.value?.forEach { user ->
+        var inputName by remember { mutableStateOf(user.fullName) }
+        var inputEmail by remember { mutableStateOf(user.email) }
+        var inputDescription by remember { mutableStateOf(user.description) }
         var inputPasswordAntiga by remember { mutableStateOf("") }
         var inputPasswordNova by remember { mutableStateOf("") }
         var inputPasswordNova1 by remember { mutableStateOf("") }
@@ -76,7 +76,7 @@ fun SettingsScreen() {
         var dialogOpenDelete by remember { mutableStateOf(false) }
         var brandCar by remember { mutableStateOf("") }
 
-        if (item.isLogin) {
+        if (user.isLogin) {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -147,7 +147,7 @@ fun SettingsScreen() {
                         .padding(start = 60.dp, end = 60.dp)
                 ) {
                     cars.value?.forEach { car ->
-                        if (item.email == car.email) {
+                        if (user.email == car.email) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -164,7 +164,18 @@ fun SettingsScreen() {
                                 )
                                 Image(
                                     modifier = Modifier.clickable {
-                                        brandCar = car.car_Brand; dialogOpenRemove = true
+                                        if (car.email == user.email) {
+                                            carViewModel.deleteCar(
+                                                Car(
+                                                    car.car_Id,
+                                                    car.car_Brand,
+                                                    car.email,
+                                                    car.car_Fuel
+                                                )
+                                            )
+                                        }
+                                        brandCar = car.car_Brand;
+                                        dialogOpenRemove = true
                                     },
                                     painter = painterResource(id = R.drawable.ic_baseline_remove_24),
                                     contentDescription = "IconRemove"
@@ -215,8 +226,8 @@ fun SettingsScreen() {
                                     inputEmail,
                                     inputName,
                                     inputDescription,
-                                    item.password,
-                                    item.isLogin
+                                    user.password,
+                                    user.isLogin
                                 )
                             )
                         }) {
@@ -338,10 +349,20 @@ fun SettingsScreen() {
                                 shape = RoundedCornerShape(5.dp),
                                 onClick = {
                                     users.value?.forEach { user ->
-                                        if (user.isLogin) {
-                                            carViewModel.insertCar(
-                                                Car(user.email, inputBrand, mSelectedTextTypeGas)
-                                            )
+                                        cars.value?.forEach { car ->
+                                            if (user.isLogin) {
+                                                carViewModel.insertCar(
+                                                    Car(
+                                                        car.car_Id,
+                                                        inputBrand,
+                                                        user.email,
+                                                        mSelectedTextTypeGas
+                                                    )
+                                                )
+                                                Log.d("Car: ",
+                                                    Car(car.car_Id,inputBrand, user.email, mSelectedTextTypeGas).toString()
+                                                )
+                                            }
                                         }
                                     }
                                     dialogOpen = false
@@ -403,7 +424,12 @@ fun SettingsScreen() {
                                         cars.value?.forEach { car ->
                                             if (brandCar == car.car_Brand && user.email == car.email) {
                                                 carViewModel.deleteCar(
-                                                    Car(user.email, car.car_Brand, car.car_Fuel)
+                                                    Car(
+                                                        car.car_Id,
+                                                        car.car_Brand,
+                                                        user.email,
+                                                        car.car_Fuel
+                                                    )
                                                 )
                                             }
                                         }
@@ -570,14 +596,14 @@ fun SettingsScreen() {
                                 border = BorderStroke(1.dp, Color.Black),
                                 shape = RoundedCornerShape(5.dp),
                                 onClick = {
-                                    if (inputPasswordAntiga == item.password && inputPasswordNova == inputPasswordNova1) {
+                                    if (inputPasswordAntiga == user.password && inputPasswordNova == inputPasswordNova1) {
                                         userViewModel.insertUser(
                                             User(
-                                                item.email,
-                                                item.fullName,
-                                                item.description,
+                                                user.email,
+                                                user.fullName,
+                                                user.description,
                                                 inputPasswordNova,
-                                                item.isLogin
+                                                user.isLogin
                                             )
                                         ); dialogOpenPassword = false
                                     } else {
@@ -657,23 +683,24 @@ fun SettingsScreen() {
                                                 if (user.isLogin && user.email == favorite.email && user.email == car.email) {
                                                     userViewModel.deleteUser(
                                                         User(
-                                                            item.email,
-                                                            item.fullName,
-                                                            item.description,
-                                                            item.password,
-                                                            item.isLogin
+                                                            user.email,
+                                                            user.fullName,
+                                                            user.description,
+                                                            user.password,
+                                                            user.isLogin
                                                         )
                                                     )
                                                     favoriteViewModel.deleteFavorite(
                                                         Favorite(
                                                             favorite.fav_Id,
-                                                            item.email,
+                                                            user.email,
                                                             favorite.name
                                                         )
                                                     )
                                                     carViewModel.deleteCar(
                                                         Car(
-                                                            item.email,
+                                                            car.car_Id,
+                                                            user.email,
                                                             car.car_Brand,
                                                             car.car_Fuel
                                                         )

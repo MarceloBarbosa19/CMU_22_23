@@ -3,6 +3,7 @@ package pt.ipp.estg.assistenteviagens.maps
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import android.util.Log
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
@@ -25,8 +26,9 @@ fun MarkerOfStationsForCity(newLocation: Location) {
     val long = newLocation.longitude
 
     addresses = geocoder.getFromLocation(lat, long, 1)
+    Log.d("Adresses: ", addresses.toString())
     val city = addresses?.get(0)?.locality
-
+    Log.d("City: ", city.toString())
     val countysViewModel: CountysViewModel = viewModel()
     val pesquisaViewModel: StationsSearchViewModel = viewModel()
     val infoTypeViewModel: StationsDataViewModel = viewModel()

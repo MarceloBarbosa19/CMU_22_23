@@ -1,10 +1,7 @@
 package pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.screens
 
-<<<<<<< HEAD
 import android.app.NotificationChannel
 import android.app.NotificationManager
-=======
->>>>>>> 1a47d371352006f7af02dfdda78a60f37619bddf
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -190,11 +187,7 @@ fun RegisterScreen(navController: NavHostController) {
                     val intent = Intent(mContext, Navigation::class.java)
                     mContext.startActivity(intent)
                     userViewModel.insertUser(User(inputEmail, inputName, inputDescription ,inputPass, isLogin))
-<<<<<<< HEAD
                     notificationManager.notify(1, notification)
-=======
-
->>>>>>> 1a47d371352006f7af02dfdda78a60f37619bddf
                 } else {
                     Toast.makeText(mContext, "The fields can´t by empty", Toast.LENGTH_LONG).show()
                 }

@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.carDatabase.entitys.Car
 
-@Database(entities = [Car::class], version = 2)
+@Database(entities = [Car::class], version = 4)
 abstract class CarDatabase: RoomDatabase() {
     abstract fun carDao(): CarDao
 
