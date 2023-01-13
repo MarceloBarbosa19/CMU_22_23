@@ -5,11 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Car(
-    @PrimaryKey
-    val email: String,
+    @PrimaryKey(autoGenerate = true)
+    var car_Id: Int = 0,
     val car_Brand: String,
+    val email: String,
     val car_Fuel: String,
-){
-    //@PrimaryKey(autoGenerate = true)
-    //var car_Id: Int = 0
-}
+)

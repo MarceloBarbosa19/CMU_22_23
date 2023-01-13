@@ -10,7 +10,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +57,7 @@ fun MapScreen(newLocation: Location) {
     val loc = LatLng(newLocation.latitude, newLocation.longitude)
     locationSource.onLocationChanged(newLocation)
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(loc, 12f)
+        position = CameraPosition.fromLatLngZoom(loc, 14f)
     }
     var isMapLoaded by remember { mutableStateOf(false) }
     val uiSettings by remember { mutableStateOf(MapUiSettings()) }
@@ -65,7 +68,6 @@ fun MapScreen(newLocation: Location) {
         Log.d(TAG, "Updating blue dot on map...")
         locationSource.onLocationChanged(newLocation)
     }
-
     GoogleMap(
         properties = properties,
         uiSettings = uiSettings,
