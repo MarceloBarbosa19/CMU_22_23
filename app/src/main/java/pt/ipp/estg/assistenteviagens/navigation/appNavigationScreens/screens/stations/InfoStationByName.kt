@@ -14,14 +14,18 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import pt.ipp.estg.assistenteviagens.R
 import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.models.NavigationItems
+import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.viewModels.FirestoreFavViewModel
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.stationsData.StationsDataViewModel
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.FavoriteViewModel
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.entitys.Favorite
@@ -32,13 +36,12 @@ import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.Use
 
 @Composable
 fun InfoStationByName(navController: NavController, stationID: Int, stationName: String) {
-    val userViewModel: UserViewModel = viewModel()
-    val users = userViewModel.readAllData.observeAsState()
+    val mContext = LocalContext.current
+    val email = Firebase.auth.currentUser?.email!!
     val infoTypeViewModel: StationsDataViewModel = viewModel()
-    val info = infoTypeViewModel.getStationsDataByName(stationName).observeAsState()
-    val favoriteViewModel: FavoriteViewModel = viewModel()
-    val favorite = favoriteViewModel.readAllData.observeAsState()
+    val info = infoTypeViewModel.getStationsData(stationID).observeAsState()
     val markerViewModel: MarkerViewModel = viewModel()
+    val firestoreFavViewModel: FirestoreFavViewModel = viewModel()
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -68,13 +71,12 @@ fun InfoStationByName(navController: NavController, stationID: Int, stationName:
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(onClick = {
-                    users.value?.forEach { user ->
-                        if (user.isLogin) {
-                            favoriteViewModel.insertFavorite(
-                                Favorite(stationID, user.email, item.Nome)
-                            )
-                        }
-                    }
+                    firestoreFavViewModel.addFavsToFirestore(
+                        mContext,
+                        email,
+                        item.Nome,
+                        stationID
+                    )
                 }) {
                     Icon(
                         contentDescription = "IconFavorite",

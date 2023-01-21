@@ -1,8 +1,6 @@
 package pt.ipp.estg.assistenteviagens.navigation
 
 import android.content.Intent
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,31 +30,28 @@ import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import pt.ipp.estg.assistenteviagens.MainActivity
-import pt.ipp.estg.assistenteviagens.Navigation
 import pt.ipp.estg.assistenteviagens.R
+import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.FirestoreUserViewModel
+import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.viewModels.FirestoreCarViewModel
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.gasType.GasTypeViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.carDatabase.CarViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.carDatabase.entitys.Car
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.FavoriteViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.entitys.Favorite
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.entitys.User
 
 @Composable
 fun SettingsScreen() {
     val mContext = LocalContext.current
-    val userViewModel: UserViewModel = viewModel()
-    val users = userViewModel.readAllData.observeAsState()
-    val carViewModel: CarViewModel = viewModel()
-    val cars = carViewModel.readAllData.observeAsState()
-    val favoriteViewModel: FavoriteViewModel = viewModel()
-    val favorites = favoriteViewModel.readAllData.observeAsState()
+
+    val email = Firebase.auth.currentUser?.email!!
+    val firestoreUserViewModel: FirestoreUserViewModel = viewModel()
+    val userData = firestoreUserViewModel.getUserData(email).observeAsState()
+    val firestoreCarsViewModel: FirestoreCarViewModel = viewModel()
+    val carData = firestoreCarsViewModel.getCarData(email)
+
     val gasTypesViewModel: GasTypeViewModel = viewModel()
     val gasType = gasTypesViewModel.getAllGasTypes().observeAsState()
 
-
-    users.value?.forEach { user ->
+    userData.value?.let { user ->
         var inputName by remember { mutableStateOf(user.fullName) }
         var inputEmail by remember { mutableStateOf(user.email) }
         var inputDescription by remember { mutableStateOf(user.description) }
@@ -74,199 +69,181 @@ fun SettingsScreen() {
         var dialogOpenRemove by remember { mutableStateOf(false) }
         var dialogOpenPassword by remember { mutableStateOf(false) }
         var dialogOpenDelete by remember { mutableStateOf(false) }
-        var brandCar by remember { mutableStateOf("") }
 
-        if (user.isLogin) {
-            Column(
+        var emailUserCar by remember { mutableStateOf("") }
+        var brandCar by remember { mutableStateOf("") }
+        val cars by carData.observeAsState(initial = listOf())
+
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+        ) {
+            Image(
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .align(Alignment.CenterHorizontally)
+                    .size(200.dp)
+                    .clip(RoundedCornerShape(percent = 10)),
+                contentScale = ContentScale.Crop,
+                painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
+                contentDescription = "AccountCircle",
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .width(330.dp)
+                    .height(60.dp),
+                label = { Text(text = "Full name") },
+                value = inputName,
+                onValueChange = { inputName = it },
+                leadingIcon = {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
+                        contentDescription = "IconName"
+                    )
+                })
+            Spacer(modifier = Modifier.height(10.dp))
+            OutlinedTextField(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .width(330.dp)
+                    .height(60.dp),
+                label = { Text(text = "Description") },
+                value = inputDescription,
+                onValueChange = { inputDescription = it },
+                leadingIcon = {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_baseline_description_24),
+                        contentDescription = "IconDescription"
+                    )
+                })
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(
+                modifier = Modifier
                     .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 40.dp)
             ) {
                 Image(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .size(200.dp)
-                        .clip(RoundedCornerShape(percent = 10)),
-                    contentScale = ContentScale.Crop,
-                    painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
-                    contentDescription = "AccountCircle",
+                    painter = painterResource(id = R.drawable.ic_baseline_directions_car_24),
+                    contentDescription = "IconCar"
                 )
-                OutlinedTextField(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .width(330.dp)
-                        .height(60.dp),
-                    label = { Text(text = "Full name") },
-                    value = inputName,
-                    onValueChange = { inputName = it },
-                    leadingIcon = {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
-                            contentDescription = "IconName"
-                        )
-                    })
-                Spacer(modifier = Modifier.height(10.dp))
-                OutlinedTextField(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .width(330.dp)
-                        .height(60.dp),
-                    label = { Text(text = "Description") },
-                    value = inputDescription,
-                    onValueChange = { inputDescription = it },
-                    leadingIcon = {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_baseline_description_24),
-                            contentDescription = "IconDescription"
-                        )
-                    })
-                Spacer(modifier = Modifier.height(20.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 40.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_baseline_directions_car_24),
-                        contentDescription = "IconCar"
-                    )
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(text = "Cars", fontSize = 20.sp)
-                    Spacer(modifier = Modifier.width(200.dp))
-                    Image(
-                        modifier = Modifier.clickable { dialogOpen = true },
-                        painter = painterResource(id = R.drawable.ic_baseline_add_24),
-                        contentDescription = "IconAdd"
-                    )
-                }
-                Spacer(modifier = Modifier.height(20.dp))
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 60.dp, end = 60.dp)
-                ) {
-                    cars.value?.forEach { car ->
-                        if (user.email == car.email) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
-                                    contentDescription = "IconArrow"
-                                )
-                                Spacer(modifier = Modifier.width(10.dp))
-                                Text(
-                                    text = "${car.car_Brand} - ${car.car_Fuel}",
-                                    fontSize = 15.sp,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                Image(
-                                    modifier = Modifier.clickable {
-                                        if (car.email == user.email) {
-                                            carViewModel.deleteCar(
-                                                Car(
-                                                    car.car_Id,
-                                                    car.car_Brand,
-                                                    car.email,
-                                                    car.car_Fuel
-                                                )
-                                            )
-                                        }
-                                        brandCar = car.car_Brand;
-                                        dialogOpenRemove = true
-                                    },
-                                    painter = painterResource(id = R.drawable.ic_baseline_remove_24),
-                                    contentDescription = "IconRemove"
-                                )
-                                Spacer(modifier = Modifier.height(10.dp))
-                            }
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-                Spacer(modifier = Modifier.height(20.dp))
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    OutlinedTextField(
+                Spacer(modifier = Modifier.width(20.dp))
+                Text(text = "Cars", fontSize = 20.sp)
+                Spacer(modifier = Modifier.width(200.dp))
+                Image(
+                    modifier = Modifier.clickable { dialogOpen = true },
+                    painter = painterResource(id = R.drawable.ic_baseline_add_24),
+                    contentDescription = "IconAdd"
+                )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 60.dp, end = 60.dp)
+            ) {
+                cars?.forEach { car ->
+                    Row(
                         modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .width(330.dp)
-                            .height(60.dp),
-                        label = { Text(text = "Email") },
-                        value = inputEmail,
-                        onValueChange = { inputEmail = it },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Email,
-                                contentDescription = "IconEmail"
-                            )
-                        })
+                            .fillMaxWidth()
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_baseline_arrow_forward_24),
+                            contentDescription = "IconArrow"
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = "${car.brand} - ${car.fuel}",
+                            fontSize = 15.sp,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Image(
+                            modifier = Modifier.clickable {
+                                emailUserCar = car.emailUser
+                                brandCar = car.brand
+                                dialogOpenRemove = true
+                            },
+                            painter = painterResource(id = R.drawable.ic_baseline_remove_24),
+                            contentDescription = "IconRemove"
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .width(330.dp)
+                        .height(60.dp),
+                    label = { Text(text = "Email") },
+                    value = inputEmail,
+                    onValueChange = { inputEmail = it },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = "IconEmail"
+                        )
+                    })
+            }
+            Spacer(modifier = Modifier.height(14.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+            ) {
+                Button(
+                    modifier = Modifier
+                        .width(325.dp)
+                        .height(48.dp)
+                        .align(Alignment.CenterHorizontally),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
+                    border = BorderStroke(1.dp, Color.Black),
+                    shape = RoundedCornerShape(5.dp),
+                    onClick = {
+                        firestoreUserViewModel.updateUserData(email, inputName, inputDescription)
+                    }) {
+                    Text(text = "Save Changes", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.height(14.dp))
-                Column(
+                Button(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                ) {
-                    Button(
-                        modifier = Modifier
-                            .width(325.dp)
-                            .height(48.dp)
-                            .align(Alignment.CenterHorizontally),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
-                        border = BorderStroke(1.dp, Color.Black),
-                        shape = RoundedCornerShape(5.dp),
-                        onClick = {
-                            userViewModel.insertUser(
-                                User(
-                                    inputEmail,
-                                    inputName,
-                                    inputDescription,
-                                    user.password,
-                                    user.isLogin
-                                )
-                            )
-                        }) {
-                        Text(text = "Save Changes", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    }
-                    Spacer(modifier = Modifier.height(14.dp))
-                    Button(
-                        modifier = Modifier
-                            .width(325.dp)
-                            .height(48.dp)
-                            .align(Alignment.CenterHorizontally),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
-                        border = BorderStroke(1.dp, Color.Black),
-                        shape = RoundedCornerShape(5.dp),
-                        onClick = { dialogOpenPassword = true }) {
-                        Text(
-                            text = "Change Password",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(14.dp))
-                    Button(
-                        modifier = Modifier
-                            .width(325.dp)
-                            .height(48.dp)
-                            .align(Alignment.CenterHorizontally),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_red)),
-                        border = BorderStroke(1.dp, Color.Black),
-                        shape = RoundedCornerShape(5.dp),
-                        onClick = { dialogOpenDelete = true }) {
-                        Text(
-                            text = "Apagar a Conta",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(14.dp))
+                        .width(325.dp)
+                        .height(48.dp)
+                        .align(Alignment.CenterHorizontally),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_buttons)),
+                    border = BorderStroke(1.dp, Color.Black),
+                    shape = RoundedCornerShape(5.dp),
+                    onClick = { dialogOpenPassword = true }) {
+                    Text(
+                        text = "Change Password",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
+                Spacer(modifier = Modifier.height(14.dp))
+                Button(
+                    modifier = Modifier
+                        .width(325.dp)
+                        .height(48.dp)
+                        .align(Alignment.CenterHorizontally),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.color_red)),
+                    border = BorderStroke(1.dp, Color.Black),
+                    shape = RoundedCornerShape(5.dp),
+                    onClick = { dialogOpenDelete = true }) {
+                    Text(
+                        text = "Apagar a Conta",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(modifier = Modifier.height(14.dp))
             }
         }
         if (dialogOpen) {
@@ -348,23 +325,12 @@ fun SettingsScreen() {
                                 border = BorderStroke(1.dp, Color.Black),
                                 shape = RoundedCornerShape(5.dp),
                                 onClick = {
-                                    users.value?.forEach { user ->
-                                        cars.value?.forEach { car ->
-                                            if (user.isLogin) {
-                                                carViewModel.insertCar(
-                                                    Car(
-                                                        car.car_Id,
-                                                        inputBrand,
-                                                        user.email,
-                                                        mSelectedTextTypeGas
-                                                    )
-                                                )
-                                                Log.d("Car: ",
-                                                    Car(car.car_Id,inputBrand, user.email, mSelectedTextTypeGas).toString()
-                                                )
-                                            }
-                                        }
-                                    }
+                                    firestoreCarsViewModel.addCarsToFirestore(
+                                        mContext,
+                                        inputBrand,
+                                        email,
+                                        mSelectedTextTypeGas
+                                    )
                                     dialogOpen = false
                                 }) {
                                 Text(text = "ADD", fontSize = 15.sp, fontWeight = FontWeight.Bold)
@@ -420,20 +386,7 @@ fun SettingsScreen() {
                                 border = BorderStroke(1.dp, Color.Black),
                                 shape = RoundedCornerShape(5.dp),
                                 onClick = {
-                                    users.value?.forEach { user ->
-                                        cars.value?.forEach { car ->
-                                            if (brandCar == car.car_Brand && user.email == car.email) {
-                                                carViewModel.deleteCar(
-                                                    Car(
-                                                        car.car_Id,
-                                                        car.car_Brand,
-                                                        user.email,
-                                                        car.car_Fuel
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    }
+                                    firestoreCarsViewModel.deleteCar(emailUserCar, brandCar)
                                     dialogOpenRemove = false
                                 }) {
                                 Text(text = "Yes", fontSize = 15.sp, fontWeight = FontWeight.Bold)
@@ -596,23 +549,7 @@ fun SettingsScreen() {
                                 border = BorderStroke(1.dp, Color.Black),
                                 shape = RoundedCornerShape(5.dp),
                                 onClick = {
-                                    if (inputPasswordAntiga == user.password && inputPasswordNova == inputPasswordNova1) {
-                                        userViewModel.insertUser(
-                                            User(
-                                                user.email,
-                                                user.fullName,
-                                                user.description,
-                                                inputPasswordNova,
-                                                user.isLogin
-                                            )
-                                        ); dialogOpenPassword = false
-                                    } else {
-                                        Toast.makeText(
-                                            mContext,
-                                            "Password doesn't match",
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                    }
+                                    /*TODO - CHANGE PASSWORD*/
                                 }) {
                                 Text(
                                     text = "Update",
@@ -677,38 +614,7 @@ fun SettingsScreen() {
                                 onClick = {
                                     val intent = Intent(mContext, MainActivity::class.java)
                                     mContext.startActivity(intent)
-                                    users.value?.forEach { user ->
-                                        favorites.value?.forEach { favorite ->
-                                            cars.value?.forEach { car ->
-                                                if (user.isLogin && user.email == favorite.email && user.email == car.email) {
-                                                    userViewModel.deleteUser(
-                                                        User(
-                                                            user.email,
-                                                            user.fullName,
-                                                            user.description,
-                                                            user.password,
-                                                            user.isLogin
-                                                        )
-                                                    )
-                                                    favoriteViewModel.deleteFavorite(
-                                                        Favorite(
-                                                            favorite.fav_Id,
-                                                            user.email,
-                                                            favorite.name
-                                                        )
-                                                    )
-                                                    carViewModel.deleteCar(
-                                                        Car(
-                                                            car.car_Id,
-                                                            user.email,
-                                                            car.car_Brand,
-                                                            car.car_Fuel
-                                                        )
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
+                                    firestoreUserViewModel.deleteAccount(email)
                                     dialogOpenDelete = false
                                 }) {
                                 Text(text = "Yes", fontSize = 15.sp, fontWeight = FontWeight.Bold)
@@ -732,6 +638,7 @@ fun SettingsScreen() {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

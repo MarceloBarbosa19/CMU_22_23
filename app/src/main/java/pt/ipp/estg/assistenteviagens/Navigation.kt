@@ -1,5 +1,6 @@
 package pt.ipp.estg.assistenteviagens
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -37,14 +38,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import pt.ipp.estg.assistenteviagens.navigation.*
 import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.models.NavigationItems
 import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.screens.ContactScreen
+import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.screens.ProfileScreen
 import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.screens.stations.*
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.entitys.User
+import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.viewModels.AuthViewModel
+import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.FirestoreUserViewModel
 import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchAppBar
 import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchViewModel
 import pt.ipp.estg.assistenteviagens.navigation.utils.searchButton.SearchWidgetState
@@ -176,8 +180,10 @@ fun TopBar(
 
 @Composable
 fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: NavHostController) {
-    val userViewModel: UserViewModel = viewModel()
-    val users = userViewModel.readAllData.observeAsState()
+    val email = Firebase.auth.currentUser?.email!!
+    Log.e(TAG, "Email: ${email}")
+    val firestoreUserViewModel: FirestoreUserViewModel = viewModel()
+    val userData = firestoreUserViewModel.getUserData(email).observeAsState()
 
     val items = listOf(
         NavigationItems.Home,
@@ -199,40 +205,38 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            users.value?.forEach { user ->
-                if (user.isLogin) {
-                    Box {
-                        IconButton(
-                            onClick = { scope.launch { scaffoldState.drawerState.close() } },
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .padding(end = 10.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "CloseIcon",
-                            )
-                        }
-                        Column(modifier = Modifier.padding(top = 30.dp)) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
-                                contentDescription = "IconImage",
-                                modifier = Modifier
-                                    .height(100.dp)
-                                    .fillMaxWidth()
-                                    .padding(5.dp)
-                            )
-                            Spacer(modifier = Modifier.size(10.dp))
-                            Text(
-                                text = user.fullName,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.align(Alignment.CenterHorizontally)
-                            )
-                            Spacer(modifier = Modifier.size(10.dp))
-                            Divider(color = Color.Gray)
-                        }
+            Box {
+                IconButton(
+                    onClick = { scope.launch { scaffoldState.drawerState.close() } },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(end = 10.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "CloseIcon",
+                    )
+                }
+                Column(modifier = Modifier.padding(top = 30.dp)) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_outline_account_circle_24),
+                        contentDescription = "IconImage",
+                        modifier = Modifier
+                            .height(100.dp)
+                            .fillMaxWidth()
+                            .padding(5.dp)
+                    )
+                    Spacer(modifier = Modifier.size(10.dp))
+                   userData.value?.let{ user->
+                       Text(
+                           text = user.fullName,
+                           fontSize = 20.sp,
+                           fontWeight = FontWeight.Bold,
+                           modifier = Modifier.align(Alignment.CenterHorizontally)
+                       )
                     }
+                    Spacer(modifier = Modifier.size(10.dp))
+                    Divider(color = Color.Gray)
                 }
             }
         }
@@ -285,8 +289,7 @@ fun DrawerItem(item: NavigationItems, selected: Boolean, onItemClick: (Navigatio
 @Composable
 fun NavigationScreens(navController: NavHostController) {
     val mContext = LocalContext.current
-    val userViewModel: UserViewModel = viewModel()
-    val users = userViewModel.readAllData.observeAsState()
+    val authViewModel: AuthViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = NavigationItems.Home.route) {
         //Screens of Drawer
@@ -294,7 +297,7 @@ fun NavigationScreens(navController: NavHostController) {
             HomeScreen()
         }
         composable(NavigationItems.Favorites.route) {
-            FavoritesScreen()
+            FavoritesScreen(navController)
         }
         composable(NavigationItems.Suggest.route) {
             SuggestScreen(navController)
@@ -307,21 +310,9 @@ fun NavigationScreens(navController: NavHostController) {
         }
         composable(NavigationItems.Logout.route) {
             Column {
-                users.value?.forEach { user ->
-                    if (user.isLogin) {
-                        val intent = Intent(mContext, MainActivity::class.java)
-                        mContext.startActivity(intent)
-                        userViewModel.insertUser(
-                            User(
-                                user.email,
-                                user.fullName,
-                                user.description,
-                                user.password,
-                                false
-                            )
-                        )
-                    }
-                }
+                authViewModel.logout()
+                val intent = Intent(mContext, MainActivity::class.java)
+                mContext.startActivity(intent)
             }
         }
         //Screens of Profile

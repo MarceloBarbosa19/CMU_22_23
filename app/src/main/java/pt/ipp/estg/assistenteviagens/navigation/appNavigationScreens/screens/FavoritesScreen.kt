@@ -25,22 +25,29 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import pt.ipp.estg.assistenteviagens.R
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.FavoriteViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.entitys.Favorite
+import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.models.NavigationItems
+import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.viewModels.FirestoreFavViewModel
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.stationsData.StationsDataViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.markersDatabase.oneStation.Marker
+import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.markersDatabase.oneStation.MarkerViewModel
 
 
 @Composable
-fun FavoritesScreen() {
+fun FavoritesScreen(navController: NavController) {
     var idValue by remember { mutableStateOf(0) }
     var dialogOpenDetails by remember { mutableStateOf(false) }
 
-    val userViewModel: UserViewModel = viewModel()
-    val users = userViewModel.readAllData.observeAsState()
-    val favoriteViewModel: FavoriteViewModel = viewModel()
-    val favorite = favoriteViewModel.readAllData.observeAsState()
+    val infoTypeViewModel: StationsDataViewModel = viewModel()
+    val markerViewModel: MarkerViewModel = viewModel()
+    val firestoreFavViewModel: FirestoreFavViewModel = viewModel()
+    val email = Firebase.auth.currentUser?.email!!
+    val favData = firestoreFavViewModel.getFavsData(email)
+    val favs by favData.observeAsState(initial = listOf())
 
     Column(
         modifier = Modifier
@@ -52,46 +59,40 @@ fun FavoritesScreen() {
                 .padding(vertical = 40.dp, horizontal = 20.dp),
             text = "Favoritos:", fontSize = 35.sp, fontWeight = FontWeight.Bold
         )
-        users.value?.forEach { user ->
-            favorite.value?.forEach { item ->
-                if (user.isLogin && item.email == user.email) {
-                    Divider(color = Color.Gray)
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Row(
-                        modifier = Modifier.padding(horizontal = 50.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            modifier = Modifier.size(13.dp),
-                            painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                            contentDescription = "IconDot"
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        ClickableText(
-                            text = AnnotatedString(item.name),
-                            onClick = { dialogOpenDetails = true; idValue = item.fav_Id }
-                        )
-                        Spacer(modifier = Modifier.weight(1F))
-                        IconButton(onClick = {
-                            favoriteViewModel.deleteFavorite(
-                                Favorite(
-                                    item.fav_Id, item.email, item.name
-                                )
-                            )
-                        }) {
-                            Icon(
-                                modifier = Modifier.size(20.dp),
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "closeIcon"
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Divider(color = Color.Gray)
+        favs?.forEach { fav ->
+            Divider(color = Color.Gray)
+            Spacer(modifier = Modifier.height(5.dp))
+            Row(
+                modifier = Modifier.padding(horizontal = 50.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    modifier = Modifier.size(13.dp),
+                    painter = painterResource(id = R.drawable.ic_baseline_circle_24),
+                    contentDescription = "IconDot"
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                ClickableText(
+                    modifier = Modifier.weight(1F),
+                    text = AnnotatedString(fav.name),
+                    onClick = { dialogOpenDetails = true; idValue = fav.idStation }
+                )
+                IconButton(onClick = {
+                    firestoreFavViewModel.deleteFav(email, fav.name)
+                }) {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "closeIcon"
+                    )
                 }
             }
+            Spacer(modifier = Modifier.height(5.dp))
+            Divider(color = Color.Gray)
         }
+
+
     }
     if (dialogOpenDetails) {
         Dialog(
@@ -268,7 +269,17 @@ fun FavoritesScreen() {
                             ),
                             border = BorderStroke(1.dp, Color.Black),
                             shape = RoundedCornerShape(5.dp),
-                            onClick = { }) {
+                            onClick = {
+                                markerViewModel.deleteAllMarker();
+                                markerViewModel.insertMarker(
+                                    Marker(
+                                        inf.Nome,
+                                        inf.Latitude,
+                                        inf.Longitude
+                                    )
+                                );
+                                navController.navigate(NavigationItems.Home.route)
+                            }) {
                             Text(
                                 text = "Ver no mapa",
                                 fontSize = 15.sp,
@@ -285,6 +296,6 @@ fun FavoritesScreen() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewFavoriteScreen() {
-    FavoritesScreen()
-
+    val navController = rememberNavController()
+    FavoritesScreen(navController = navController)
 }
