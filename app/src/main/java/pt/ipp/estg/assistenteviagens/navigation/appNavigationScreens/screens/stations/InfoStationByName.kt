@@ -39,9 +39,10 @@ fun InfoStationByName(navController: NavController, stationID: Int, stationName:
     val mContext = LocalContext.current
     val email = Firebase.auth.currentUser?.email!!
     val infoTypeViewModel: StationsDataViewModel = viewModel()
-    val info = infoTypeViewModel.getStationsData(stationID).observeAsState()
+    val info = infoTypeViewModel.getStationsDataByName(stationName).observeAsState()
     val markerViewModel: MarkerViewModel = viewModel()
     val firestoreFavViewModel: FirestoreFavViewModel = viewModel()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -252,6 +253,7 @@ fun InfoStationByName(navController: NavController, stationID: Int, stationName:
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewInfoStationByName() {
