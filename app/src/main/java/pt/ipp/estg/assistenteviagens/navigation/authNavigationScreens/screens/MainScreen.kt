@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import pt.ipp.estg.assistenteviagens.R
-import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.AuthNavigationItems
+import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.entity.AuthNavigationItems
 
 @Composable
 fun MainScreen(navController: NavHostController) {

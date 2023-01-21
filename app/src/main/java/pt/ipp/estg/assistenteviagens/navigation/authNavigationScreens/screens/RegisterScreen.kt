@@ -1,10 +1,6 @@
 package pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.screens
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
@@ -30,21 +26,23 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.NotificationCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import pt.ipp.estg.assistenteviagens.Navigation
 import pt.ipp.estg.assistenteviagens.R
-import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.AuthNavigationItems
+import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.entity.AuthNavigationItems
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.entitys.User
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Snackbar
+import androidx.compose.runtime.livedata.observeAsState
+import pt.ipp.estg.assistenteviagens.Navigation
+import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.viewModels.AuthViewModel
+import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.FirestoreUserViewModel
+import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.Notification
 
 
 @Composable
 fun RegisterScreen(navController: NavHostController) {
     val userViewModel: UserViewModel = viewModel()
+    val users = userViewModel.readAllData.observeAsState()
+
     val mContext = LocalContext.current
     var inputName by remember { mutableStateOf("") }
     var inputEmail by remember { mutableStateOf("") }
@@ -53,22 +51,9 @@ fun RegisterScreen(navController: NavHostController) {
     var showPassword by remember { mutableStateOf(false) }
     val isLogin = true
 
-    val notificationManager =
-        mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val channel = NotificationChannel(
-            "channel_id",
-            "channel_name",
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
-        notificationManager.createNotificationChannel(channel)
-    }
-    val notification = NotificationCompat.Builder(mContext, "channel_id")
-        .setSmallIcon(R.drawable.ic_baseline_notifications_active_24)
-        .setContentTitle("WhereYouWantToGo?")
-        .setContentText("Registado com Sucesso")
-        .setAutoCancel(true)
-        .build()
+    val viewModel: AuthViewModel = viewModel()
+    val authStatus = viewModel.authState.observeAsState()
+    val firestoreUserViewModel: FirestoreUserViewModel = viewModel()
 
     Box(
         modifier = Modifier
@@ -184,12 +169,14 @@ fun RegisterScreen(navController: NavHostController) {
             shape = RoundedCornerShape(10.dp),
             onClick = {
                 if (inputName.isNotEmpty() && inputEmail.isNotEmpty() && inputPass.isNotEmpty()) {
+                    viewModel.register(inputEmail, inputPass)
+                    firestoreUserViewModel.addUserToFirestore(mContext, inputEmail, inputName, inputDescription)
+                    Notification(mContext)
                     val intent = Intent(mContext, Navigation::class.java)
                     mContext.startActivity(intent)
-                    userViewModel.insertUser(User(inputEmail, inputName, inputDescription ,inputPass, isLogin))
-                    notificationManager.notify(1, notification)
                 } else {
-                    Toast.makeText(mContext, "The fields can´t by empty", Toast.LENGTH_LONG).show()
+                    Toast.makeText(mContext, "The fields can´t by empty", Toast.LENGTH_LONG)
+                        .show()
                 }
             }) {
             Text(text = "LET'S GET STARTED", fontSize = 20.sp, fontWeight = FontWeight.Bold)
@@ -228,4 +215,3 @@ fun RegisterScreen(navController: NavHostController) {
         }
     }
 }
-

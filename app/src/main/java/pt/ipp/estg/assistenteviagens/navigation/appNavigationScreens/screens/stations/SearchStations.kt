@@ -25,8 +25,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import pt.ipp.estg.assistenteviagens.R
 import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.models.NavigationItems
+import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.viewModels.FirestoreCarViewModel
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.brands.BrandsViewModel
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.countys.CountysViewModel
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.districts.DistrictsViewModel
@@ -57,13 +60,16 @@ fun SearchStations(navController: NavController) {
     val brandsViewModel: BrandsViewModel = viewModel()
     val districtsViewModel: DistrictsViewModel = viewModel()
     val countysViewModel: CountysViewModel = viewModel()
-    val carViewModel: CarViewModel = viewModel()
 
     val gasType = gasTypesViewModel.getAllGasTypes().observeAsState()
     val brands = brandsViewModel.getAllBrands().observeAsState()
     val districts = districtsViewModel.getAllDistricts().observeAsState()
     val countys = countysViewModel.getAllCountys().observeAsState()
-    val cars = carViewModel.readAllData.observeAsState()
+
+    val firestoreCarsViewModel: FirestoreCarViewModel = viewModel()
+    val email = Firebase.auth.currentUser?.email!!
+    val carData = firestoreCarsViewModel.getCarData(email)
+    val cars by carData.observeAsState(initial = listOf())
 
     Column(
         modifier = Modifier
@@ -104,12 +110,12 @@ fun SearchStations(navController: NavController) {
                 onDismissRequest = { mExpandedCar = false },
                 modifier = Modifier.width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
             ) {
-                cars.value?.forEach { item ->
+                cars?.forEach { item ->
                     DropdownMenuItem(onClick = {
-                        mSelectedTextCar = item.car_Brand
+                        mSelectedTextCar = item.brand
                         mExpandedCar = false
                     }) {
-                        Text(text = item.car_Brand)
+                        Text(text = item.brand)
                     }
                 }
             }

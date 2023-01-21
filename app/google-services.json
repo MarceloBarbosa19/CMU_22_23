@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "933421805334",
+    "project_id": "assistenteviagens",
+    "storage_bucket": "assistenteviagens.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933421805334:android:20376644059565c7706a37",
+        "android_client_info": {
+          "package_name": "pt.ipp.estg.assistenteviagens"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "933421805334-q1iteq784gld65818v7mhe1g132l6v5n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNMiwxL9HkIhjainUa431SEnAsBU4pXpw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "933421805334-q1iteq784gld65818v7mhe1g132l6v5n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
