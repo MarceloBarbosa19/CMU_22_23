@@ -5,19 +5,31 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.viewModels.AuthViewModel
+
 
 class FirestoreUserViewModel(application: Application) : AndroidViewModel(application) {
     private val db: FirebaseFirestore = Firebase.firestore
     private val fAuth: FirebaseAuth = Firebase.auth
+    private val auth = FirebaseAuth.getInstance()
+    val email = mutableStateOf(TextFieldValue(""))
+    val isLoading = mutableStateOf(false)
+    val error = mutableStateOf("")
+
 
     //register
     fun addUserToFirestore(
@@ -137,10 +149,23 @@ class FirestoreUserViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
-
-
-
-
-
+    fun sendPasswordResetEmail() {
+        viewModelScope.launch {
+            isLoading.value = true
+            val emailAddress = email.value.text
+            if (emailAddress.isEmpty()) {
+                error.value = "Please enter your email"
+                isLoading.value = false
+                return@launch
+            }
+            try {
+                auth.sendPasswordResetEmail(emailAddress).await()
+                error.value = ""
+            } catch (e: Exception) {
+                error.value = e.message.toString()
+            }
+            isLoading.value = false
+        }
+    }
 
 }

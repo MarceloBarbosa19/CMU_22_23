@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -18,7 +19,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -31,9 +34,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import pt.ipp.estg.assistenteviagens.Navigation
 import pt.ipp.estg.assistenteviagens.R
-import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.entity.AuthNavigationItems
+
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.viewModels.AuthViewModel
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.FirestoreUserViewModel
+import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.entity.AuthNavigationItems
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
@@ -165,7 +169,12 @@ fun LoginScreen(navController: NavHostController) {
                 border = BorderStroke(1.dp, Color.Black),
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
-                    firestoreUserViewModel.verifyEmail(mContext, inputEmail, inputPass, authViewModel)
+                    firestoreUserViewModel.verifyEmail(
+                        mContext,
+                        inputEmail,
+                        inputPass,
+                        authViewModel
+                    )
                 }) {
                 Text(text = "Login", fontSize = 25.sp, fontWeight = FontWeight.Bold)
             }
@@ -186,7 +195,7 @@ fun LoginScreen(navController: NavHostController) {
                 colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.white)),
                 border = BorderStroke(1.dp, Color.Black),
                 shape = RoundedCornerShape(10.dp),
-                onClick = { /*TODO - LOGIN WITH GOOGLE*/}) {
+                onClick = { /*TODO - LOGIN WITH GOOGLE*/ }) {
                 Row {
                     Image(
                         painter = painterResource(id = R.drawable.icon_google),
@@ -201,7 +210,15 @@ fun LoginScreen(navController: NavHostController) {
                     )
                 }
             }
+            Spacer(modifier = Modifier.width(10.dp))
+            ClickableText(
+                modifier = Modifier.weight(1F).align(Alignment.CenterHorizontally),
+                text = AnnotatedString("Forgot Password"),
+
+                onClick = { navController.navigate(AuthNavigationItems.Forgot.route) }
+            )
         }
+
     }
     if (authStatus.value != null && authStatus.value!! == AuthViewModel.AuthStatus.LOGGED) {
         val intent = Intent(mContext, Navigation::class.java)

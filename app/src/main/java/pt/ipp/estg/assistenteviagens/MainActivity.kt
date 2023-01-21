@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.models.NavigationItems
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.entity.AuthNavigationItems
+import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.screens.ForgotScreen
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.screens.LoginScreen
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.screens.MainScreen
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.screens.RegisterScreen
@@ -58,6 +59,9 @@ fun AuthNavigationScreens(navController: NavHostController) {
         }
         composable(AuthNavigationItems.Register.route) {
             RegisterScreen(navController)
+        }
+        composable(AuthNavigationItems.Forgot.route) {
+            ForgotScreen(navController)
         }
     }
 }

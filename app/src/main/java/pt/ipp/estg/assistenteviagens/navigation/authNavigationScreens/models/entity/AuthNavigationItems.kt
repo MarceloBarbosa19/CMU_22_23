@@ -8,4 +8,5 @@ sealed class AuthNavigationItems(
     object Home: AuthNavigationItems("home", "Home")
     object Login: AuthNavigationItems("login", "Login")
     object Register: AuthNavigationItems("register", "Register")
+    object Forgot: AuthNavigationItems("forgot", "Forgot")
 }
