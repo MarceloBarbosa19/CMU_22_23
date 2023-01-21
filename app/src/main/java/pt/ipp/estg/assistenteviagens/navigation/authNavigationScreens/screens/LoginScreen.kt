@@ -20,16 +20,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import pt.ipp.estg.assistenteviagens.Navigation
@@ -38,6 +41,7 @@ import pt.ipp.estg.assistenteviagens.R
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.viewModels.AuthViewModel
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.FirestoreUserViewModel
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.entity.AuthNavigationItems
+import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
@@ -195,6 +199,7 @@ fun LoginScreen(navController: NavHostController) {
                 colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.white)),
                 border = BorderStroke(1.dp, Color.Black),
                 shape = RoundedCornerShape(10.dp),
+                enabled = false,
                 onClick = { /*TODO - LOGIN WITH GOOGLE*/ }) {
                 Row {
                     Image(
@@ -210,18 +215,26 @@ fun LoginScreen(navController: NavHostController) {
                     )
                 }
             }
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             ClickableText(
-                modifier = Modifier.weight(1F).align(Alignment.CenterHorizontally),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally),
+                style = TextStyle(color = colorResource(id = R.color.color_buttons)),
                 text = AnnotatedString("Forgot Password"),
-
                 onClick = { navController.navigate(AuthNavigationItems.Forgot.route) }
             )
         }
-
     }
     if (authStatus.value != null && authStatus.value!! == AuthViewModel.AuthStatus.LOGGED) {
         val intent = Intent(mContext, Navigation::class.java)
         mContext.startActivity(intent)
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun PreviewLoginScreen() {
+    AssistenteViagensTheme {
+        val navController = rememberNavController()
+        LoginScreen(navController)
     }
 }

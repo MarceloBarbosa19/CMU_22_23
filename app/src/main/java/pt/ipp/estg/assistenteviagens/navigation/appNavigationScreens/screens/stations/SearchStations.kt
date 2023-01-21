@@ -20,11 +20,13 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import pt.ipp.estg.assistenteviagens.R
@@ -35,6 +37,7 @@ import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.countys.CountysViewMo
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.districts.DistrictsViewModel
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.gasType.GasTypeViewModel
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.carDatabase.CarViewModel
+import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 @Composable
 fun SearchStations(navController: NavController) {
@@ -320,5 +323,13 @@ fun SearchStations(navController: NavController) {
             onClick = { navController.navigate(NavigationItems.TopStations.route) }) {
             Text(text = "Postos Económicos", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         }
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun PreviewSearchStations() {
+    AssistenteViagensTheme {
+        val navController = rememberNavController()
+        SearchStations(navController)
     }
 }

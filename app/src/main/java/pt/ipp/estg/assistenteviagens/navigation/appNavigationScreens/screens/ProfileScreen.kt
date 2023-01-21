@@ -21,11 +21,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import pt.ipp.estg.assistenteviagens.R
+import pt.ipp.estg.assistenteviagens.navigation.SuggestScreen
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.FirestoreUserViewModel
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.viewModels.FirestoreCarViewModel
+import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 @Preview
 @Composable
@@ -121,6 +124,10 @@ fun ProfileScreen() {
         }
     }
 }
-
-
-
+@Preview(showBackground = true)
+@Composable
+fun PreviewProfileScreen() {
+    AssistenteViagensTheme {
+        ProfileScreen()
+    }
+}

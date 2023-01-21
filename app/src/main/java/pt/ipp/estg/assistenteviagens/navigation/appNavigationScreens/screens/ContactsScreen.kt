@@ -106,5 +106,4 @@ private operator fun NavigationItems.Contact.invoke(
 @Composable
 fun PreviewFavoriteScreen() {
     ContactScreen()
-
 }

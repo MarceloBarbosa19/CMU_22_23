@@ -32,10 +32,14 @@ import pt.ipp.estg.assistenteviagens.R
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.entity.AuthNavigationItems
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.assistenteviagens.Navigation
+import pt.ipp.estg.assistenteviagens.NavigationScreen
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.viewModels.AuthViewModel
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.FirestoreUserViewModel
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.Notification
+import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 
 @Composable
@@ -198,6 +202,7 @@ fun RegisterScreen(navController: NavHostController) {
             colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.white)),
             border = BorderStroke(1.dp, Color.Black),
             shape = RoundedCornerShape(10.dp),
+            enabled = false,
             onClick = { /*TODO*/ }) {
             Row {
                 Image(
@@ -213,5 +218,13 @@ fun RegisterScreen(navController: NavHostController) {
                 )
             }
         }
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun PreviewRegisterScreen() {
+    AssistenteViagensTheme {
+        val navController = rememberNavController()
+        RegisterScreen(navController)
     }
 }

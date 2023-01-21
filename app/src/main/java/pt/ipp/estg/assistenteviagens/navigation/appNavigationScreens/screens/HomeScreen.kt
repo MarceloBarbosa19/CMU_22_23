@@ -9,7 +9,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import pt.ipp.estg.assistenteviagens.maps.ScaffolMap
 import pt.ipp.estg.assistenteviagens.maps.LocationUtils.RequestPerms
 
-
 @Composable
 fun HomeScreen() {
     val context = LocalContext.current
@@ -20,11 +19,4 @@ fun HomeScreen() {
         RequestPerms(context)
         ScaffolMap()
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewHomeScreen() {
-    HomeScreen()
 }
