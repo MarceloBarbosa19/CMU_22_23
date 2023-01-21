@@ -6,4 +6,5 @@
     <string name="title_activity_navigation">Navigation</string>
     <string name="title_activity_register_screen">RegisterScreen</string>
     <string name="title_activity_pesquisa">Pesquisa</string>
+    <string name="msg_token_fmt" />
 </resources>
