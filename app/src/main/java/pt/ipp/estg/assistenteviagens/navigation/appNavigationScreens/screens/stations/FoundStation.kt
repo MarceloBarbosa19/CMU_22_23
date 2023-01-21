@@ -88,9 +88,9 @@ fun FoundStation(navController: NavController, combID: Int, marcaID: Int, distID
                             .padding(horizontal = 20.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(text = "info.tipoCombustivel", fontSize = 14.sp)
+                        Text(text = info.tipoCombustivel, fontSize = 14.sp)
                         Spacer(modifier = Modifier.weight(1f))
-                        Text(text = "info.preco", fontSize = 14.sp)
+                        Text(text = info.preco, fontSize = 14.sp)
                     }
                     Spacer(modifier = Modifier.height(5.dp))
                 }
