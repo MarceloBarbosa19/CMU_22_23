@@ -36,7 +36,6 @@ import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.stationsData.Stations
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.markersDatabase.oneStation.Marker
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.markersDatabase.oneStation.MarkerViewModel
 
-
 @Composable
 fun FavoritesScreen(navController: NavController) {
     var idValue by remember { mutableStateOf(0) }

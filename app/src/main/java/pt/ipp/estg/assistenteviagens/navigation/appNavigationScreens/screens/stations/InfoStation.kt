@@ -17,10 +17,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import pt.ipp.estg.assistenteviagens.R
@@ -29,6 +31,7 @@ import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.vie
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.stationsData.StationsDataViewModel
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.markersDatabase.oneStation.Marker
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.markersDatabase.oneStation.MarkerViewModel
+import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 @Composable
 fun InfoStation(navController: NavController, stationID: Int, stationName: String) {
@@ -255,5 +258,13 @@ fun InfoStation(navController: NavController, stationID: Int, stationName: Strin
                 }
             }
         }
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun PreviewInfoStation() {
+    AssistenteViagensTheme {
+        val navController = rememberNavController()
+        InfoStation(navController, 1, "Station 1")
     }
 }

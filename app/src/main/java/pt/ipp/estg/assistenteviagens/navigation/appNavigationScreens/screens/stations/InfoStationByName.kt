@@ -9,7 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,21 +17,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import pt.ipp.estg.assistenteviagens.R
 import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.models.NavigationItems
 import pt.ipp.estg.assistenteviagens.navigation.authNavigationScreens.models.viewModels.FirestoreFavViewModel
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.stationsData.StationsDataViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.FavoriteViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.favoriteDatabase.entitys.Favorite
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.markersDatabase.oneStation.Marker
 import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.markersDatabase.oneStation.MarkerViewModel
-import pt.ipp.estg.assistenteviagens.room.userDatabaseRelations.userDatabase.UserViewModel
+import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 
 @Composable
@@ -250,6 +250,13 @@ fun InfoStationByName(navController: NavController, stationID: Int, stationName:
                 Text(text = "Ver no mapa", fontSize = 20.sp, fontWeight = FontWeight.Bold)
             }
         }
-
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun PreviewInfoStationByName() {
+    AssistenteViagensTheme {
+        val navController = rememberNavController()
+        InfoStationByName(navController, 1, "Station 1")
     }
 }

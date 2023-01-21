@@ -86,11 +86,3 @@ fun AuthNavigationScreens(navController: NavHostController) {
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    AssistenteViagensTheme {
-        AuthNavigation()
-    }
-}

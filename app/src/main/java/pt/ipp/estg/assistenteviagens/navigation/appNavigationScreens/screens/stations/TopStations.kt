@@ -16,16 +16,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.assistenteviagens.R
+import pt.ipp.estg.assistenteviagens.navigation.SuggestScreen
 import pt.ipp.estg.assistenteviagens.navigation.appNavigationScreens.models.NavigationItems
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.gasType.GasTypeViewModel
 import pt.ipp.estg.assistenteviagens.room.gasPriceDatabase.topStations.TopStationsViewModel
+import pt.ipp.estg.assistenteviagens.ui.theme.AssistenteViagensTheme
 
 @Composable
 fun TopStations(navController: NavHostController) {
@@ -124,5 +128,13 @@ fun TopStations(navController: NavHostController) {
                 }
             }
         }
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun PreviewTopStations() {
+    AssistenteViagensTheme {
+        val navController = rememberNavController()
+        TopStations(navController)
     }
 }

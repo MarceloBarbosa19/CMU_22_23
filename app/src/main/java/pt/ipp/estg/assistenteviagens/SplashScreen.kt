@@ -47,7 +47,6 @@ class SplashScreen : ComponentActivity() {
         }
     }
 }
-
 @Composable
 fun InitialSplash() {
     Column(
@@ -66,7 +65,6 @@ fun InitialSplash() {
         )
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
